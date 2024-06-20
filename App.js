@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { useEffect, useState } from "react";
 import SplashScreen from "./src/screens/SplashScreen";
 import HomeScreen from "./src/screens/HomeScreen";
-import LoginScreen from "./src/screens/LoginScreen"; // Asegúrate de que LoginScreen esté en la carpeta correcta
+import LoginScreen from "./src/screens/LoginScreen";
 
 export default function App() {
   const [isShowSplash, setIsShowSplash] = useState(true);

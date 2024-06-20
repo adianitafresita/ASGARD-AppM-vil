@@ -6,7 +6,7 @@ const LoginScreen = ({ onLogin }) => {
   const [password, setPassword] = useState('');
 
   const handleLoginPress = () => {
-    // Aquí podrías agregar la lógica de inicio de sesión real
+    // Lógica de inicio de sesión real
     Alert.alert('Iniciando sesión', `Email: ${email}\nPassword: ${password}`);
     onLogin();
   };
