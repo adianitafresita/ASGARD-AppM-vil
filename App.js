@@ -1,16 +1,41 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { useEffect, useState } from "react";
 import SplashScreen from "./src/screens/SplashScreen";
 import HomeScreen from "./src/screens/HomeScreen";
-import { useEffect, useState } from "react";
+import LoginScreen from "./src/screens/LoginScreen"; // Asegúrate de que LoginScreen esté en la carpeta correcta
 
 export default function App() {
   const [isShowSplash, setIsShowSplash] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  useEffect(() =>{
-    setTimeout(() =>{
+  useEffect(() => {
+    const timer = setTimeout(() => {
       setIsShowSplash(false);
-    }, 3000)
-  });
-  return <>{isShowSplash ? <SplashScreen/> : <HomeScreen />}</>;
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+  };
+
+  return (
+    <View style={styles.container}>
+      {isShowSplash ? (
+        <SplashScreen />
+      ) : isLoggedIn ? (
+        <HomeScreen />
+      ) : (
+        <LoginScreen onLogin={handleLogin} />
+      )}
+    </View>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
