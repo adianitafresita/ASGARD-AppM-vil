@@ -1,90 +1,116 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
-const LoginScreen = ({ onLogin }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+// Imagina que `logo` es la importación de tu imagen de logo
+const logo = require('../../assets/logo.webp');
 
-  const handleLoginPress = () => {
-    // Lógica de inicio de sesión real
-    Alert.alert('Iniciando sesión', `Email: ${email}\nPassword: ${password}`);
-    onLogin();
-  };
+export default function LoginForm({ navigation }) {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
-  return (
-    <View style={styles.mainContainer}>
-      <View style={styles.container}>
-        <Text style={styles.title}>ASGARD</Text>
-        <Text style={styles.subTitle}>Inicia sesión con tu cuenta</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Correo Electrónico"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Contraseña"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
-        <TouchableOpacity style={styles.button} onPress={handleLoginPress}>
-          <Text style={styles.buttonText}>Iniciar Sesión</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-};
+    const irIncio = async () => {
+        navigation.navigate('Navigator');
+    };
+
+    return (
+        <View style={styles.container}>
+                <View style={styles.LogoContainer}>
+                    <Image source={logo} style={styles.Logo} />
+                    {}
+                    <View style={styles.Hr}></View>
+                </View>
+                <View style={styles.MainContainer}>
+                    <Text style={styles.MainText}>Inicio de sesión</Text>
+                    <Text style={styles.SubMainText}>Bienvenido de nuevo!</Text>
+
+                    <Text style={styles.label}>Correo</Text>
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setEmail}
+                        value={email}
+                        placeholder="ejemplo@gmail.com"
+                        placeholderTextColor="#909090"
+                    />
+                    <Text style={styles.label}>Contraseña</Text>
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setPassword}
+                        value={password}
+                        placeholder="Digita tu contraseña"
+                        secureTextEntry
+                        placeholderTextColor="#909090"
+                    />
+
+                    <TouchableOpacity style={styles.button} onPress={irIncio}>
+                        <Text style={styles.buttonText}>Iniciar Sesión</Text>
+                    </TouchableOpacity>
+                </View>
+        </View>
+    );
+}
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    backgroundColor: 'white',
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  subTitle: {
-    fontSize: 20,
-    color: 'gray',
-  },
-  title: {
-    fontSize: 40,
-    color: '#FFD500',
-    fontWeight: 'bold',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: 'gray',
-    padding: 10,
-    paddingStart: 30,
-    width: '80%',
-    height: 50,
-    marginTop: 20,
-    borderRadius: 30,
-  },
-  button: {
-    width: '80%',
-    padding: 15,
-    borderRadius: 30,
-    backgroundColor: '#FF790D',
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
+    container: {
+        height: "100%",
+        backgroundColor: '#3D2B29',
+        justifyContent: 'start',
+        paddingHorizontal: 20,
+    },
+    LogoContainer: {
+        alignItems: 'center',
+        marginTop: 50,
+        height: 150
+    },
+    Logo: {
+        width: 100,
+        height: 120,
+    },
+    Hr: {
+        width: '100%',
+        height: 2,
+        backgroundColor: 'white',  
+        marginVertical: 10,
+        marginTop: 30  
+    },
+    MainContainer: {
+        marginTop: 50,  
+    },
+    MainText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        color: "#FF833A"
+    },
+    SubMainText: {
+        fontSize: 18,
+        marginBottom: 20,
+        color: "white"
+    },
+    label: {
+        fontSize: 16,
+        marginBottom: 5,
+        color: "white"
+    },
+    input: {
+        borderWidth: 2,
+        borderColor: '#FF833A',
+        borderRadius: 5,
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        marginBottom: 10,
+        fontSize: 16,
+        color: '#fff',
+    },
+    button: {
+        backgroundColor: '#FF833A',
+        paddingVertical: 12,
+        borderRadius: 5,
+        marginTop: 30,
+        alignItems: 'center',
+    },
+    buttonText: {
+        color: 'white',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
 });
-
-export default LoginScreen;

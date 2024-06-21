@@ -1,41 +1,31 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View } from "react-native";
-import { useEffect, useState } from "react";
-import SplashScreen from "./src/screens/SplashScreen";
-import HomeScreen from "./src/screens/HomeScreen";
-import LoginScreen from "./src/screens/LoginScreen";
+import * as React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+// Importa tus pantallas
+import LoginScreen from './src/screens/LoginScreen';
+import HomeScreen from './src/screens/HomeScreen';
+import Navigator from './src/navigation/TabNavigator';
+import CreditoFiscal from './src/screens/CreditoFiscal';
+import Empleados from './src/screens/Empleados';
+import FacturaConsumidorFinal from './src/screens/FacturaConsumidorFinal';
+import FacturaSujetoExcluido from './src/screens/FacturaSujetoExcluido';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const [isShowSplash, setIsShowSplash] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsShowSplash(false);
-    }, 3000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-  };
-
   return (
-    <View style={styles.container}>
-      {isShowSplash ? (
-        <SplashScreen />
-      ) : isLoggedIn ? (
-        <HomeScreen />
-      ) : (
-        <LoginScreen onLogin={handleLogin} />
-      )}
-    </View>
+    
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="CreditoFiscal" component={CreditoFiscal} />
+        <Stack.Screen name="Empleados" component={Empleados} />
+        <Stack.Screen name="FacturaConsumidorFinal" component={FacturaConsumidorFinal} />
+        <Stack.Screen name="FacturaSujetoExcluido" component={FacturaSujetoExcluido} />
+        <Stack.Screen name="Navigator" component={Navigator} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
