@@ -34,7 +34,7 @@ const CreditoFiscal = () => {
       <View style={styles.buttonContainer}>
         <Button
           title="Registrar"
-          color="#FF790D"
+          color="#FFD500"
           onPress={() => setModalVisible(true)}
         />
       </View>
@@ -51,7 +51,7 @@ const CreditoFiscal = () => {
             <Text style={styles.tableHeaderText}>Departamento</Text>
             <Text style={styles.tableHeaderText}>Municipio</Text>
           </View>
-          {/* Aquí puedes iterar sobre tus registros */}
+          {/* Registros */}
           <View style={styles.tableRow}>
             <Text style={styles.tableCell}>Juan</Text>
             <Text style={styles.tableCell}>Pérez</Text>
@@ -85,13 +85,13 @@ const CreditoFiscal = () => {
             ))}
             <View style={styles.modalButtonContainer}>
               <TouchableOpacity
-                style={[styles.modalButton, { backgroundColor: '#FF790D' }]}
+                style={[styles.modalButton, { backgroundColor: '#FFD500' }]}
                 onPress={handleGuardar}
               >
                 <Text style={styles.modalButtonText}>Guardar</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.modalButton, { backgroundColor: '#C0C0C0' }]}
+                style={[styles.modalButton, { backgroundColor: '#FFD500' }]}
                 onPress={() => setModalVisible(false)}
               >
                 <Text style={styles.modalButtonText}>Cancelar</Text>

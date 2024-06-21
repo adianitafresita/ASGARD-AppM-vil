@@ -4,13 +4,15 @@ import { View, Text, StyleSheet, Button } from 'react-native';
 export default function FacturaSujetoExcluido() {
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Registro para Factura Sujeto Excluido Electronico</Text>
-      <Button title="Agregar Usuario" onPress={() => {}} color="#FF6F00" />
+      <Text style={styles.header}>Registro para Factura Sujeto Excluido Electrónico</Text>
+      <View style={styles.buttonContainer}>
+        <Button title="Agregar Usuario" onPress={() => {}} color="#FFD500" />
+      </View>
       <View style={styles.table}>
         <View style={styles.tableRow}>
           <Text style={styles.tableHeader}>Nombre</Text>
           <Text style={styles.tableHeader}>Apellido</Text>
-          <Text style={styles.tableHeader}>Dui</Text>
+          <Text style={styles.tableHeader}>DUI</Text>
           <Text style={styles.tableHeader}>NIT</Text>
         </View>
         <View style={styles.tableRow}>
@@ -34,6 +36,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
+  },
+  buttonContainer: {
+    alignSelf: 'flex-end',
+    width: 150, 
+    marginBottom: 10,
   },
   table: {
     marginTop: 20,

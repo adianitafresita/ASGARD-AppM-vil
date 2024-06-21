@@ -29,7 +29,7 @@ const Empleados = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Empleados</Text>
       <View style={styles.buttonContainer}>
-        <Button title="Agregar Empleado" color="#FFA500" onPress={() => setModalVisible(true)} />
+        <Button title="Agregar Empleado" color="#FFD500" onPress={() => setModalVisible(true)} />
       </View>
       <ScrollView horizontal>
         <View style={styles.table}>
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     margin: 5,
-    backgroundColor: '#FF790D',
+    backgroundColor: '#FFD500', 
     borderRadius: 5,
     alignItems: 'center',
     width: 150,
