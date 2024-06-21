@@ -22,9 +22,9 @@ const CreditoFiscal = () => {
   };
 
   const handleGuardar = () => {
-    // Aquí puedes implementar la lógica para guardar el registro
+    // lógica para guardar
     console.log('Guardando registro:', newRegistro);
-    setModalVisible(false); // Cerrar el modal después de guardar
+    setModalVisible(false); // Cerrar el modal 
   };
 
   return (
