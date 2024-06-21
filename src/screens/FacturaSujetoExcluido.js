@@ -1,5 +1,5 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import React from 'react';
+import { View, Text, StyleSheet, Button } from 'react-native';
 
 export default function FacturaSujetoExcluido() {
   return (
@@ -20,8 +20,8 @@ export default function FacturaSujetoExcluido() {
           <Text style={styles.tableCell}>123456789</Text>
         </View>
       </View>
-    </View>
-  );
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -51,5 +51,5 @@ const styles = StyleSheet.create({
   tableCell: {
     flex: 1,
     textAlign: 'center',
-  },
+  },
 });
