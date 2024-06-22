@@ -5,9 +5,11 @@ export default function FacturaSujetoExcluido() {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Registro para Factura Sujeto Excluido Electrónico</Text>
+      {/* Botón para agregar usuario */}
       <View style={styles.buttonContainer}>
         <Button title="Agregar Usuario" onPress={() => {}} color="#FFD500" />
       </View>
+      {/* Tabla de usuarios */}
       <View style={styles.table}>
         <View style={styles.tableRow}>
           <Text style={styles.tableHeader}>Nombre</Text>
@@ -15,6 +17,7 @@ export default function FacturaSujetoExcluido() {
           <Text style={styles.tableHeader}>DUI</Text>
           <Text style={styles.tableHeader}>NIT</Text>
         </View>
+        {/* Ejemplo de datos */}
         <View style={styles.tableRow}>
           <Text style={styles.tableCell}>Karthi</Text>
           <Text style={styles.tableCell}>Gomez</Text>
@@ -26,6 +29,7 @@ export default function FacturaSujetoExcluido() {
   );
 }
 
+//Estilos de la pantalla
 const styles = StyleSheet.create({
   container: {
     flex: 1,

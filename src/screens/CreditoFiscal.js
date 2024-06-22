@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, Modal, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 
 const CreditoFiscal = () => {
+  // Estado para controlar la visibilidad del modal y el registro de nuevos datos
   const [modalVisible, setModalVisible] = useState(false);
   const [newRegistro, setNewRegistro] = useState({
     nombre: '',
@@ -14,6 +15,7 @@ const CreditoFiscal = () => {
     municipio: ''
   });
 
+  // Función para manejar cambios en los inputs del formulario
   const handleInputChange = (name, value) => {
     setNewRegistro({
       ...newRegistro,
@@ -21,6 +23,7 @@ const CreditoFiscal = () => {
     });
   };
 
+  // Función para guardar el nuevo registro y cerrar el modal
   const handleGuardar = () => {
     // lógica para guardar
     console.log('Guardando registro:', newRegistro);
@@ -31,6 +34,7 @@ const CreditoFiscal = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Registro para crédito fiscal</Text>
 
+      {/* Botón para abrir el modal */}
       <View style={styles.buttonContainer}>
         <Button
           title="Registrar"
@@ -39,6 +43,7 @@ const CreditoFiscal = () => {
         />
       </View>
 
+      {/* Tabla para mostrar registros existentes */}
       <ScrollView horizontal>
         <View style={styles.table}>
           <View style={styles.tableHeader}>
@@ -51,7 +56,7 @@ const CreditoFiscal = () => {
             <Text style={styles.tableHeaderText}>Departamento</Text>
             <Text style={styles.tableHeaderText}>Municipio</Text>
           </View>
-          {/* Registros */}
+          {/* Registros como ejemplo */}
           <View style={styles.tableRow}>
             <Text style={styles.tableCell}>Juan</Text>
             <Text style={styles.tableCell}>Pérez</Text>
@@ -65,6 +70,7 @@ const CreditoFiscal = () => {
         </View>
       </ScrollView>
 
+      {/* Modal para agregar nuevos registros */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -74,6 +80,7 @@ const CreditoFiscal = () => {
         <View style={styles.modalContainer}>
           <View style={styles.modalView}>
             <Text style={styles.modalTitle}>Agregar registro</Text>
+            {/* Inputs para cada campo del nuevo registro */}
             {Object.keys(newRegistro).map((key) => (
               <TextInput
                 key={key}
@@ -83,6 +90,7 @@ const CreditoFiscal = () => {
                 onChangeText={(text) => handleInputChange(key, text)}
               />
             ))}
+            {/* Botones dentro del modal para guardar o cancelar */}
             <View style={styles.modalButtonContainer}>
               <TouchableOpacity
                 style={[styles.modalButton, { backgroundColor: '#FFD500' }]}
@@ -104,6 +112,7 @@ const CreditoFiscal = () => {
   );
 };
 
+// Estilos de la pantalla
 const styles = StyleSheet.create({
   container: {
     flex: 1,
