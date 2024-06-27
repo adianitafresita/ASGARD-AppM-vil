@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Button, ScrollView, Modal, TextInput, TouchableOpacity } from 'react-native';
 
 const FacturaConsumidorFinal = () => {
+  // Estado para controlar la visibilidad del modal y el nuevo registro
   const [modalVisible, setModalVisible] = useState(false);
   const [newRegistro, setNewRegistro] = useState({
     nombre: '',
@@ -14,12 +15,14 @@ const FacturaConsumidorFinal = () => {
     municipio: ''
   });
 
+  // Ejemplo de datos de empleados (simulación de datos)
   const empleados = [
     { nombre: 'Karthi', apellido: 'Gomez', dui: '12345678-9', nit: '123456789', departamento: 'San Salvador', municipio: 'San Salvador', correo: 'karthi@example.com', telefono: '555-1234' },
     { nombre: 'Ana', apellido: 'López', dui: '87654321-0', nit: '0614-150598-202-1', departamento: 'Santa Ana', municipio: 'Santa Ana', correo: 'ana@example.com', telefono: '555-5678' },
     { nombre: 'Luis', apellido: 'García', dui: '11223344-5', nit: '0614-150598-303-2', departamento: 'San Miguel', municipio: 'San Miguel', correo: 'luis@example.com', telefono: '555-9101' }
   ];
 
+  // Función para manejar cambios en los inputs del modal
   const handleInputChange = (name, value) => {
     setNewRegistro({
       ...newRegistro,
@@ -27,22 +30,26 @@ const FacturaConsumidorFinal = () => {
     });
   };
 
+  // Función para guardar el nuevo registro
   const handleGuardar = () => {
-    // Lógica para guardar el nuevo registro
     console.log('Guardando registro:', newRegistro);
-    setModalVisible(false); // Cerrar el modal 
+    setModalVisible(false); // Cerrar el modal después de guardar
   };
 
   return (
     <View style={styles.container}>
+      {/* Título principal */}
       <Text style={styles.FCF}>Registro para Factura Consumidor Final Electrónico</Text>
       
+      {/* Botón para abrir el modal */}
       <View style={styles.addButtonContainer}>
         <Button title="Registar" onPress={() => setModalVisible(true)} color="#FFD500" />
       </View>
       
+      {/* ScrollView horizontal para la tabla */}
       <ScrollView horizontal>
         <View style={styles.table}>
+          {/* Encabezados de la tabla */}
           <View style={styles.tableRow}>
             <Text style={[styles.tableHeader, { flex: 2 }]}>Nombre</Text>
             <Text style={[styles.tableHeader, { flex: 2 }]}>Apellido</Text>
@@ -54,6 +61,7 @@ const FacturaConsumidorFinal = () => {
             <Text style={[styles.tableHeader, { flex: 2 }]}>Teléfono</Text>
           </View>
           
+          {/* Renderizado de filas de empleados */}
           {empleados.map((empleado, index) => (
             <View key={index} style={styles.tableRow}>
               <Text style={[styles.tableCell, { flex: 2 }]}>{empleado.nombre}</Text>
@@ -69,6 +77,7 @@ const FacturaConsumidorFinal = () => {
         </View>
       </ScrollView>
 
+      {/* Modal para agregar nuevo registro */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -78,6 +87,7 @@ const FacturaConsumidorFinal = () => {
         <View style={styles.modalContainer}>
           <View style={styles.modalView}>
             <Text style={styles.modalTitle}>Agregar Registro</Text>
+            {/* Inputs para cada campo del nuevo registro */}
             {Object.keys(newRegistro).map((key) => (
               <TextInput
                 key={key}
@@ -87,6 +97,7 @@ const FacturaConsumidorFinal = () => {
                 onChangeText={(text) => handleInputChange(key, text)}
               />
             ))}
+            {/* Botones para guardar o cancelar */}
             <View style={styles.modalButtonContainer}>
               <TouchableOpacity
                 style={[styles.modalButton, { backgroundColor: '#FFD500' }]}
