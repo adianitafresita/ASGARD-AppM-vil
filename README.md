@@ -1,9 +1,9 @@
 # ASGARD- INTEGRANTES
--Diego Fernando Villegas Gomez
--Katherine Ariana Melgar Echegoyen
--Roberto Alfonso Escamilla Ruiz
--Gabriel Alessandro Cornejo Godinez
--Genesis Tatiana Herrera Lopez
+-Diego Fernando Villegas Gomez 20220382
+-Katherine Ariana Melgar Echegoyen 20220125
+-Roberto Alfonso Escamilla Ruiz 20220356
+-Gabriel Alessandro Cornejo Godinez 20220005
+-Genesis Tatiana Herrera Lopez 20220108
 Dependencias instalas:
 "@expo/vector-icons": "^14.0.0",
     "@react-navigation/bottom-tabs": "^6.5.20",
