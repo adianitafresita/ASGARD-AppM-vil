@@ -1,18 +1,74 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+
+import React, {useEffect, useState } from 'react';
+import { View, 
+  Text,
+  ActivityIndicator,
+  StyleSheet,
+  Alert,
+  Image} from 'react-native';
+
+import fetchData from '../utils/fetchdata';
+import Input from "../components/Inputs/Input";
+import Buttons from "../components/Buttons/Button";
 
 // imagen de logo
 const logo = require('../../assets/logo.webp');
 
-export default function LoginForm({ navigation }) {
+export default function LoginScreen({ navigation }) {
     // Estados para almacenar el correo electrónico y la contraseña
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [isContra, setIsContra] = useState(true);
+    const [email, setEmail] = useState("");
+    const [contrasenia, setContraseña] = useState("");
 
-    // Función para navegar a la pantalla principal después del inicio de sesión
-    const irIncio = async () => {
-        navigation.navigate('Navigator');
+    const validarSesion = async () => {
+        try {
+            const DATA = await fetchData("administrador", "getUser");
+            if (DATA.session) {
+                setContraseña("");
+                setEmail("");
+                navigation.replace("TabNavigator");
+            } else {
+                console.log("No hay sesión activa");
+            }
+        } catch (error) {
+            console.error(error);
+            Alert.alert("Error", "Ocurrió un error al validar la sesión");
+        }
     };
+
+    // Función para manejar el inicio de sesión
+    const handlerLogin = async () => {
+        try {
+            // Crear un FormData con los datos de usuario y contraseña
+            const form = new FormData();
+            form.append("email_administrador", email);
+            form.append("contraseña_administrador", contrasenia);
+
+            // Realizar una solicitud para iniciar sesión usando fetchData
+            const DATA = await fetchData("administrador", "logIn", form);
+
+            // Verificar la respuesta del servidor
+            if (DATA.status) {
+                // Limpiar los campos de usuario y contraseña
+                setContraseña("");
+                setEmail("");
+                // Navegar a la pantalla principal de la aplicación
+                navigation.replace("TabNavigator");
+            } else {
+                // Mostrar una alerta en caso de error durante el inicio de sesión
+                console.log(DATA);
+                Alert.alert("Error sesión", DATA.error);
+            }
+        } catch (error) {
+            // Manejar errores que puedan ocurrir durante la solicitud
+            console.error(error, "Error desde Catch");
+            Alert.alert("Error", "Ocurrió un error al iniciar sesión");
+        }
+    };
+
+    useEffect(() => {
+        validarSesion();
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -29,29 +85,27 @@ export default function LoginForm({ navigation }) {
 
                 {/* Campo de entrada para el correo electrónico */}
                 <Text style={styles.label}>Correo</Text>
-                <TextInput
+                <Input
                     style={styles.input}
-                    onChangeText={setEmail}
-                    value={email}
+                    setValor={email}
+                    setTextChange={setEmail}
                     placeholder="ejemplo@gmail.com"
                     placeholderTextColor="#909090"
                 />
 
                 {/* Campo de entrada para la contraseña */}
                 <Text style={styles.label}>Contraseña</Text>
-                <TextInput
+                <Input
                     style={styles.input}
-                    onChangeText={setPassword}
-                    value={password}
+                    setValor={contrasenia}
+                    setTextChange={setContraseña}
                     placeholder="Digita tu contraseña"
                     secureTextEntry
                     placeholderTextColor="#909090"
                 />
 
                 {/* Botón para iniciar sesión */}
-                <TouchableOpacity style={styles.button} onPress={irIncio}>
-                    <Text style={styles.buttonText}>Iniciar Sesión</Text>
-                </TouchableOpacity>
+                <Buttons textoBoton= "Iniciar Sesión" accionBoton={handlerLogin} />
             </View>
         </View>
     );

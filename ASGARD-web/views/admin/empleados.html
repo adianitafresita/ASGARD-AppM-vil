@@ -1,0 +1,139 @@
+<!-- Definir idioma de la página -->
+<html lang="es">
+
+<head>
+    <!-- Metadatos de la página -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Título del documento -->
+    <title>Empleados</title>
+    <!-- Mandar a llamar el framework -->
+    <link href="../../resources/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Css de un boton naranja -->
+    <link href="../../resources/css/color_de_botones.css">
+    <!-- Css para la tabla responsive -->
+    <link rel="stylesheet" href="../../resources/css/sidebar.css">
+    <link rel="stylesheet" href="../../resources/css/Inicio.css">
+    <link rel="stylesheet" href="../../resources/css/usuariofacturacion.css">
+    <link type="text/css" rel="stylesheet" href="../../resources/css/bootstrap-icons.min.css">
+</head>
+
+<body>
+    <!-- Espacio vertical -->
+    <br>
+    <main>
+        <!-- Título del contenido principal -->
+        <h3 id="mainTitle"></h3>
+        <div class="row">
+            <!-- Formulario de búsqueda -->
+            <form class="col-sm-12 col-md-6" id="searchForm">
+                <div class="row">
+                    <div class="col-6">
+                        <input type="search" class="form-control" name="search" placeholder="Buscar por nombre de admin"
+                            required>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn" type="submit"><img src="../../resources/img/lupa.png" class="img-fluid"
+                                width="35px" height="35px" alt="buscando"></button>
+                        <button type="reset" class="btn btn-secondary" onclick="fillTable()">
+                            <i class="bi bi-x-square-fill"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <br>
+            <br>
+            <!-- Botón para crear -->
+            <div class="col-12 col-sm-auto ms-auto">
+                <button type="button" class="btn btn-warning float-start" data-bs-toggle="modal"
+                    data-bs-target="#crearModal" onclick="openCreate()"><i class="bi bi-file-earmark-plus"></i> Agregar
+                    Empleados</button>
+            </div>
+        </div>
+
+        <!-- Tabla para mostrar los registros existentes -->
+        <table class="table table-hover">
+            <!-- Encabezado de la tabla -->
+            <thead>
+                <tr>
+                    <!-- Cantidad de registros encontrados -->
+                    <td colspan="5" id="rowsFound"></td>
+                </tr>
+                <!-- Títulos de las columnas -->
+                <tr>
+                    <th>Nombre del empleado</th>
+                    <th>Apellido del empleado</th>
+                    <th>Correo electrónico</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <!-- Cuerpo de la tabla -->
+            <tbody id="tableBody"></tbody>
+        </table>
+
+        <!-- Modal para guardar un registro -->
+        <div class="modal fade" id="saveModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="modalTitle" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="modalTitle"></h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <!-- Formulario para guardar un registro -->
+                    <form id="saveForm">
+                        <div class="modal-body row g-3">
+                            <!-- Campo oculto para el ID -->
+                            <input type="number" class="d-none" id="idAdmin" name="idAdmin">
+                            <div class="col-sm-12 col-md-6">
+                                <label for="NAdmin" class="form-label">Nombre</label>
+                                <input id="NAdmin" type="text" name="NAdmin" class="form-control" required>
+                            </div>
+                            <div class="col-sm-12 col-md-6">
+                                <label for="ApAdmin" class="form-label">Apellido</label>
+                                <input id="ApAdmin" type="text" name="ApAdmin" class="form-control" required>
+                            </div>
+                            <div class="col-sm-12 col-md-6">
+                                <label for="CorreoAd" class="form-label">Correo electrónico</label>
+                                <input id="CorreoAd" type="email" name="CorreoAd" class="form-control">
+                            </div>
+                            <div class="col-sm-12 col-md-6">
+                                <label for="ContraAd" class="form-label">Contraseña</label>
+                                <input id="ContraAd" type="password" name="ContraAd" class="form-control">
+                            </div>
+                            <div class="col-sm-12 col-md-6">
+                                <label for="confirmarClaveA" class="form-label">Confirmar contraseña</label>
+                                <input id="confirmarClaveA" type="password" name="confirmarClaveA" class="form-control">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-warning" id="btnAccion">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- IMPORTANDO ARCHIVOS JAVASCRIPT -->
+    <!-- Mandar a llamar el controlador de la página privada -->
+    <script type="text/javascript" src="../../controllers/utils/admin.js"></script>
+    <!-- Mandar a llamar el framework -->
+    <script type="text/javascript" src="../../resources/js/bootstrap.bundle.min.js"></script>
+    <!-- Mandar a llamar el controlador de sujeto excluido -->
+    <script src="../../controllers/admin/empleado.js"></script>
+    <!-- Llamada al controlador -->
+    <script src="../../controllers/utils/componentes.js"></script>
+    <!-- Validar número de teléfono -->
+    <script src="../../resources/js/validar_telefono.js"></script>
+    <!-- Validar número de DUI -->
+    <script src="../../resources/js/validar_dui.js"></script>
+    <!-- Validar número de NIT -->
+    <script src="../../resources/js/validar_nit.js"></script>
+    <!-- archivo de js para libreria de iconos para el navbar -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <!-- Mandar a llamar la librería de alertas -->
+    <script type="text/javascript" src="../../resources/js/sweetalert.min.js"></script>
+</body>
+
+</html>
