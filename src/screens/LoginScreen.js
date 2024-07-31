@@ -1,4 +1,3 @@
-
 import React, {useEffect, useState } from 'react';
 import { View, 
   Text,
@@ -7,8 +6,8 @@ import { View,
   Alert,
   Image} from 'react-native';
 
-  import fetchData from '../utils/fetchdata';
-  import Input from "../components/Inputs/Input";
+import fetchData from '../utils/fetchData';
+import Input from "../components/Inputs/Input";
 import Buttons from "../components/Buttons/Button";
 
 // imagen de logo
@@ -43,12 +42,12 @@ export default function LoginScreen({ navigation }) {
         try {
             // Crear un FormData con los datos de usuario y contraseña
             const form = new FormData();
-            form.append("email_administrador", email);
-            form.append("contraseña_administrador", contrasenia);
-
+            form.append("email", email); // Asegúrate de usar "email"
+            form.append("clave", contrasenia); // Asegúrate de usar "clave"
+    
             // Realizar una solicitud para iniciar sesión usando fetchData
             const DATA = await fetchData("administrador", "logIn", form);
-
+    
             // Verificar la respuesta del servidor
             if (DATA.status) {
                 // Limpiar los campos de usuario y contraseña
@@ -65,9 +64,8 @@ export default function LoginScreen({ navigation }) {
             // Manejar errores que puedan ocurrir durante la solicitud
             console.error(error, "Error desde Catch");
             Alert.alert("Error", "Ocurrió un error al iniciar sesión");
-        }
+        }
     };
-
     useEffect(() => {
         validarSesion();
     }, []);
@@ -178,5 +176,5 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 18,
         fontWeight: 'bold',
-    },
+    },
 });

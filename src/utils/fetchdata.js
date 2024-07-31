@@ -1,4 +1,5 @@
 import * as constantes from '../utils/constantes';
+
 const fetchData = async (filename, action, form = null) => {
     const OPTIONS = {};
     if (form) {
@@ -27,6 +28,6 @@ const fetchData = async (filename, action, form = null) => {
         console.error('Fetch error:', error);
         return { error: true, message: error.message };
     }
-
-
 };
+
+export default fetchData;
