@@ -7,8 +7,8 @@ import { View,
   Alert,
   Image} from 'react-native';
 
-import fetchData from '../utils/fetchdata';
-import Input from "../components/Inputs/Input";
+  import fetchData from '../utils/fetchdata';
+  import Input from "../components/Inputs/Input";
 import Buttons from "../components/Buttons/Button";
 
 // imagen de logo
@@ -26,7 +26,7 @@ export default function LoginScreen({ navigation }) {
             if (DATA.session) {
                 setContraseña("");
                 setEmail("");
-                navigation.replace("TabNavigator");
+                navigation.replace("Navigator");
             } else {
                 console.log("No hay sesión activa");
             }
@@ -35,6 +35,8 @@ export default function LoginScreen({ navigation }) {
             Alert.alert("Error", "Ocurrió un error al validar la sesión");
         }
     };
+    
+    
 
     // Función para manejar el inicio de sesión
     const handlerLogin = async () => {
@@ -53,7 +55,7 @@ export default function LoginScreen({ navigation }) {
                 setContraseña("");
                 setEmail("");
                 // Navegar a la pantalla principal de la aplicación
-                navigation.replace("TabNavigator");
+                navigation.replace("Navigator");
             } else {
                 // Mostrar una alerta en caso de error durante el inicio de sesión
                 console.log(DATA);
