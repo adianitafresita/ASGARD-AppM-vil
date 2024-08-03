@@ -6,7 +6,7 @@ import { View,
   Alert,
   Image} from 'react-native';
 
-import fetchData from '../utils/fetchData';
+import fetchData from '../utils/fetchdata';
 import Input from "../components/Inputs/Input";
 import Buttons from "../components/Buttons/Button";
 
