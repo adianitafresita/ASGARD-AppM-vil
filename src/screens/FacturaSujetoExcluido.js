@@ -1,86 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Alert, FlatList, ScrollView, StyleSheet } from 'react-native';
-import Input from '../components/Inputs/Input';
+import Input from '../components/Inputs/Input_crud';
 import Buttons from '../components/Buttons/Button';
 import * as Constantes from '../utils/constantes';
-import fetchData from '../utils/fetchdata';
+//import fetchData from '../utils/fetchdata';
 import ComboBox from '../components/Combo box/ComboBox';
 
 const App = () => {
+  const ip = Constantes.IP;
   const [view, setView] = useState('list');
-  const [facturas, setFacturas] = useState([]);
+  const [usuarios, setUsuarios] = useState([]);
+  const [servicios, setServicios] = useState([]);
+  const [clientes, setClientes] = useState([]);
   const [form, setForm] = useState({
     idFactura: '',
     descripcion: '',
+    tipo_servicio: '',
+    id_servicio: '',
+    id_cliente: '',
     monto: '',
-    tipoServicio: '',
-    cliente: '',
-    servicio: '',
-    fechaEmision: ''
+    fecha_emision: '',
   });
 
   const initialFormState = {
     idFactura: '',
     descripcion: '',
+    tipo_servicio: '',
+    id_servicio: '',
+    id_cliente: '',
     monto: '',
-    tipoServicio: '',
-    cliente: '',
-    servicio: '',
-    fechaEmision: ''
+    fecha_emision: '',
   };
 
-  const [tipoServicios, setTipoServicios] = useState([]);
-  const [clientes, setClientes] = useState([]);
-  const [servicios, setServicios] = useState([]);
-
   useEffect(() => {
-    const fetchDataAsync = async () => {
-      try {
-        console.log('Fetching tipoServicios...');
-        const tipoServiciosResponse = await fetchData('tipo_servicios', 'GET');
-        console.log('tipoServiciosResponse:', tipoServiciosResponse);
+    fetch(`${ip}/ASGARD-web/api/services/admin/factura_sujeto_excluido.php?action=readAll`)
+      .then(response => response.json())
+      .then(data => setUsuarios(data.dataset));
 
-        console.log('Fetching clientes...');
-        const clientesResponse = await fetchData('clientes', 'GET');
-        console.log('clientesResponse:', clientesResponse);
+    fetch(`${ip}/ASGARD-web/api/services/admin/factura_sujeto_excluido.php?action=readAllservicio`)
+      .then(response => response.json())
+      .then(data => setServicios(data.dataset));
 
-        console.log('Fetching servicios...');
-        const serviciosResponse = await fetchData('servicios', 'GET');
-        console.log('serviciosResponse:', serviciosResponse);
-
-        if (tipoServiciosResponse.error) {
-          throw new Error(tipoServiciosResponse.message);
-        }
-
-        if (clientesResponse.error) {
-          throw new Error(clientesResponse.message);
-        }
-
-        if (serviciosResponse.error) {
-          throw new Error(serviciosResponse.message);
-        }
-
-        setTipoServicios(tipoServiciosResponse.dataset.map(item => ({
-          value: item.id_servicio,
-          label: item.nombre_servicio,
-        })));
-
-        setClientes(clientesResponse.dataset.map(item => ({
-          value: item.id_cliente,
-          label: item.nombre_cliente,
-        })));
-
-        setServicios(serviciosResponse.dataset.map(item => ({
-          value: item.id_servicio,
-          label: item.nombre_servicio,
-        })));
-      } catch (error) {
-        console.error('Error al cargar los datos:', error);
-        Alert.alert('Error', 'No se pudieron cargar las opciones.');
-      }
-    };
-
-    fetchDataAsync();
+    fetch(`${ip}/ASGARD-web/api/services/admin/factura_sujeto_excluido.php?action=readAllclientes`)
+      .then(response => response.json())
+      .then(data => setClientes(data.dataset));
   }, []);
 
   useEffect(() => {
@@ -92,23 +55,27 @@ const App = () => {
   const handleCreate = async () => {
     const formData = new FormData();
     formData.append('descripcion', form.descripcion);
+    formData.append('tipo_servicio', form.tipo_servicio);
+    formData.append('id_servicio', form.id_servicio);
+    formData.append('id_cliente', form.id_cliente);
     formData.append('monto', form.monto);
-    formData.append('tipoServicio', form.tipoServicio);
-    formData.append('cliente', form.cliente);
-    formData.append('servicio', form.servicio);
-    formData.append('fechaEmision', form.fechaEmision);
+    formData.append('fecha_emision', form.fecha_emision);
 
     try {
-      const response = await fetchData('factura_sujeto_excluido_data_admin', 'POST', formData);
-      if (response.status) {
+      const response = await fetch(`${ip}/ASGARD-web/api/services/admin/factura_sujeto_excluido.php?action=createRow`, {
+        method: 'POST',
+        body: formData
+      });
+      const data = await response.json();
+      if (data.status) {
         setView('list');
         refreshList();
       } else {
-        Alert.alert('Error', response.error || 'Error desconocido al crear la factura');
+        Alert.alert('Error', data.error);
       }
     } catch (error) {
-      console.error('Error en handleCreate:', error);
-      Alert.alert('Error', 'Ocurrió un error al crear la factura');
+      console.error(error);
+      Alert.alert('Error', 'Ocurrió un error al crear el usuario');
     }
   };
 
@@ -116,69 +83,84 @@ const App = () => {
     const formData = new FormData();
     formData.append('idFactura', form.idFactura);
     formData.append('descripcion', form.descripcion);
+    formData.append('tipo_servicio', form.tipo_servicio);
+    formData.append('id_servicio', form.id_servicio);
+    formData.append('id_cliente', form.id_cliente);
     formData.append('monto', form.monto);
-    formData.append('tipoServicio', form.tipoServicio);
-    formData.append('cliente', form.cliente);
-    formData.append('servicio', form.servicio);
-    formData.append('fechaEmision', form.fechaEmision);
+    formData.append('fecha_emision', form.fecha_emision);
 
     try {
-      const response = await fetchData('factura_sujeto_excluido_data_admin', 'PUT', formData);
-      if (response.status) {
+      const response = await fetch(`${ip}/ASGARD-web/api/services/admin/factura_sujeto_excluido.php?action=updateRow`, {
+        method: 'POST',
+        body: formData
+      });
+      const data = await response.json();
+      if (data.status) {
         setView('list');
         refreshList();
       } else {
-        Alert.alert('Error', response.error || 'Error desconocido al actualizar la factura');
+        Alert.alert('Error', data.error);
       }
     } catch (error) {
-      console.error('Error en handleUpdate:', error);
-      Alert.alert('Error', 'Ocurrió un error al actualizar la factura');
+      console.error(error);
+      Alert.alert('Error', 'Ocurrió un error al actualizar el usuario');
     }
   };
 
   const handleDelete = async (id) => {
+    const formData = new FormData();
+    formData.append('idFactura', id);
+
     try {
-      const response = await fetchData(`factura_sujeto_excluido_data_admin/${id}`, 'DELETE');
-      if (response.status) {
+      const response = await fetch(`${ip}/ASGARD-web/api/services/admin/factura_sujeto_excluido.php?action=deleteRow`, {
+        method: 'POST',
+        body: formData
+      });
+      const data = await response.json();
+      if (data.status) {
         refreshList();
       } else {
-        Alert.alert('Error', response.error || 'Error desconocido al eliminar la factura');
+        Alert.alert('Error', data.error);
       }
     } catch (error) {
-      console.error('Error en handleDelete:', error);
-      Alert.alert('Error', 'Ocurrió un error al eliminar la factura');
+      console.error(error);
+      Alert.alert('Error', 'Ocurrió un error al eliminar el usuario');
     }
   };
 
-  const refreshList = async () => {
-    try {
-      const response = await fetchData('factura_sujeto_excluido_data_admin', 'GET');
-      setFacturas(response.dataset);
-    } catch (error) {
-      console.error('Error al refrescar la lista:', error);
-    }
+  const refreshList = () => {
+    fetch(`${ip}/ASGARD-web/api/services/admin/factura_sujeto_excluido.php?action=readAll`)
+      .then(response => response.json())
+      .then(data => setUsuarios(data.dataset));
   };
 
   const handleEdit = async (id) => {
+    const formData = new FormData();
+    formData.append('idFactura', id);
+
     try {
-      const response = await fetchData(`factura_sujeto_excluido_data_admin/${id}`, 'GET');
-      if (response.status) {
+      const response = await fetch(`${ip}/ASGARD-web/api/services/admin/factura_sujeto_excluido.php?action=readOne`, {
+        method: 'POST',
+        body: formData
+      });
+      const data = await response.json();
+      if (data.status) {
         setForm({
-          idFactura: response.dataset.id_factura,
-          descripcion: response.dataset.descripcion_servicio,
-          monto: response.dataset.monto_servicio,
-          tipoServicio: response.dataset.tipo_servicio,
-          cliente: response.dataset.cliente,
-          servicio: response.dataset.id_servicio,
-          fechaEmision: response.dataset.fecha_emision
+          idFactura: data.dataset.id_factura,
+          descripcion: data.dataset.descripcion,
+          tipo_servicio: data.dataset.tipo_servicio,
+          id_servicio: data.dataset.id_servicio,
+          id_cliente: data.dataset.id_cliente,
+          monto: data.dataset.monto,
+          fecha_emision: data.dataset.fecha_emision,
         });
         setView('edit');
       } else {
-        Alert.alert('Error', response.error || 'Error desconocido al obtener la factura');
+        Alert.alert('Error', data.error);
       }
     } catch (error) {
-      console.error('Error en handleEdit:', error);
-      Alert.alert('Error', 'Ocurrió un error al obtener la factura');
+      console.error(error);
+      Alert.alert('Error', 'Ocurrió un error al obtener el usuario');
     }
   };
 
@@ -187,14 +169,14 @@ const App = () => {
       case 'list':
         return (
           <View style={styles.listContainer}>
-            <Text style={styles.texto}>Usuarios para factura sujeto excluido electrónico</Text>
-            <Buttons textoBoton="Agregar Factura" accionBoton={() => setView('create')} />
+            <Text style={styles.texto}>Sujeto Excluido</Text>
+            <Buttons textoBoton="Agregar usuario" accionBoton={() => setView('create')} />
             <FlatList
-              data={facturas}
+              data={usuarios}
               keyExtractor={item => item.id_factura.toString()}
               renderItem={({ item }) => (
                 <View style={styles.itemContainer}>
-                  <Text style={styles.itemText}>{item.descripcion_servicio}</Text>
+                  <Text style={styles.itemText}>{item.descripcion}</Text>
                   <View style={styles.buttonsContainer}>
                     <TouchableOpacity onPress={() => handleEdit(item.id_factura)} style={styles.button}>
                       <Text style={styles.buttonText}>Editar</Text>
@@ -212,42 +194,47 @@ const App = () => {
       case 'edit':
         return (
           <ScrollView contentContainerStyle={styles.formContainer}>
-            <Text style={styles.texto}>{view === 'create' ? 'Crear Factura' : 'Editar Factura'}</Text>
+            <Text style={styles.texto}>{view === 'create' ? 'Crear Usuario' : 'Editar Usuario'}</Text>
             <Input
-              placeHolder='Descripción del Servicio'
+              placeHolder='Descripción'
               setValor={form.descripcion}
               setTextChange={(text) => setForm({ ...form, descripcion: text })}
             />
-            <Input
-              placeHolder='Monto del Servicio'
-              setValor={form.monto}
-              setTextChange={(text) => setForm({ ...form, monto: text })}
-            />
             <ComboBox
-              placeHolder='Tipo de Servicio'
-              data={tipoServicios}
-              selectedValue={form.tipoServicio}
-              onValueChange={(value) => setForm({ ...form, tipoServicio: value })}
-            />
-            <ComboBox
-              placeHolder='Cliente'
-              data={clientes}
-              selectedValue={form.cliente}
-              onValueChange={(value) => setForm({ ...form, cliente: value })}
+              placeHolder='Tipo Servicio'
+              options={[
+                { label: 'Credito Fiscal', value: 'Credito Fiscal' },
+                { label: 'Factura Consumidor Final', value: 'Factura Consumidor Final' },
+                { label: 'Factura Sujeto Excluido', value: 'Factura Sujeto Excluido' },
+                { label: 'Otro', value: 'Otro' },
+              ]}
+              selectedValue={form.tipo_servicio}
+              onValueChange={(value) => setForm({ ...form, tipo_servicio: value })}
             />
             <ComboBox
               placeHolder='Servicio'
-              data={servicios}
-              selectedValue={form.servicio}
-              onValueChange={(value) => setForm({ ...form, servicio: value })}
+              options={servicios.map(servicio => ({ label: servicio.nombre, value: servicio.id_servicio }))}
+              selectedValue={form.id_servicio}
+              onValueChange={(value) => setForm({ ...form, id_servicio: value })}
+            />
+            <ComboBox
+              placeHolder='Cliente'
+              options={clientes.map(cliente => ({ label: cliente.nombre, value: cliente.id_cliente }))}
+              selectedValue={form.id_cliente}
+              onValueChange={(value) => setForm({ ...form, id_cliente: value })}
             />
             <Input
-              placeHolder='Fecha de Emisión'
-              setValor={form.fechaEmision}
-              setTextChange={(text) => setForm({ ...form, fechaEmision: text })}
+              placeHolder='Monto'
+              setValor={form.monto}
+              setTextChange={(text) => setForm({ ...form, monto: text })}
+            />
+            <Input
+              placeHolder='Fecha Emisión'
+              setValor={form.fecha_emision}
+              setTextChange={(text) => setForm({ ...form, fecha_emision: text })}
             />
             <Buttons
-              textoBoton={view === 'create' ? 'Agregar usuario' : 'Actualizar usuario'}
+              textoBoton={view === 'create' ? 'Crear' : 'Actualizar'}
               accionBoton={view === 'create' ? handleCreate : handleUpdate}
             />
             <Buttons
@@ -278,36 +265,35 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   texto: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    textAlign: 'center',
   },
   itemContainer: {
     padding: 10,
-    marginVertical: 5,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 5,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
   },
   itemText: {
-    fontSize: 16,
+    fontSize: 18,
   },
   buttonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: 10,
   },
   button: {
-    padding: 10,
     backgroundColor: '#007bff',
+    padding: 10,
     borderRadius: 5,
   },
   buttonText: {
     color: '#fff',
-    textAlign: 'center',
+    fontWeight: 'bold',
   },
   formContainer: {
-    paddingBottom: 20,
+    flex: 1,
+    justifyContent: 'center',
   },
 });
 
