@@ -1,9 +1,13 @@
+// screens/FacturaSujetoExcluido.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TextInput } from 'react-native';
 import fetchData from '../utils/fetchdata';
+import Card from '../components/Card/Card';
 
 const FacturaSujetoExcluido = () => {
   const [usuarios, setUsuarios] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
 
   useEffect(() => {
     const obtenerDatos = async () => {
@@ -11,6 +15,7 @@ const FacturaSujetoExcluido = () => {
         const data = await fetchData('factura_sujeto_excluido', 'readAll');
         if (data && data.dataset) {
           setUsuarios(data.dataset);
+          setFilteredData(data.dataset);
           console.log('Data set to usuarios:', data.dataset);
         } else {
           console.log('No se encontraron datos');
@@ -23,28 +28,35 @@ const FacturaSujetoExcluido = () => {
     obtenerDatos();
   }, []);
 
+  useEffect(() => {
+    const filterData = () => {
+      if (searchQuery === '') {
+        setFilteredData(usuarios);
+      } else {
+        const filtered = usuarios.filter(item =>
+          item.nombre_cliente.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.apellido_cliente.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        setFilteredData(filtered);
+      }
+    };
+
+    filterData();
+  }, [searchQuery, usuarios]);
+
   return (
     <View style={styles.container}>
-      <Text style={styles.texto}>Usuarios de Sujeto excluido electrónico</Text>
+      <Text style={styles.title}>Usuarios de Sujeto Excluido Electrónico</Text>
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Buscar por nombre o apellido"
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+      />
       <FlatList
-        data={usuarios}
+        data={filteredData}
         keyExtractor={(item) => item.id_factura.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.itemContainer}>
-            <Text style={styles.itemText}>Nombre: {item.nombre_cliente}</Text>
-            <Text style={styles.itemText}>Apellido: {item.apellido_cliente}</Text>
-            <Text style={styles.itemText}>NIT: {item.nit_cliente}</Text>
-            <Text style={styles.itemText}>Dirección: {item.direccion_cliente}</Text>
-            <Text style={styles.itemText}>Departamento: {item.departamento_cliente}</Text>
-            <Text style={styles.itemText}>Municipio: {item.municipio_cliente}</Text>
-            <Text style={styles.itemText}>Email: {item.email_cliente}</Text>
-            <Text style={styles.itemText}>Teléfono: {item.telefono_cliente}</Text>
-            <Text style={styles.itemText}>DUI: {item.dui_cliente}</Text>
-            <Text style={styles.itemText}>Tipo de servicio: {item.tipo_servicio}</Text>
-            <Text style={styles.itemText}>Monto: {item.monto}</Text>
-            <Text style={styles.itemText}>Fecha de emisión: {item.fecha_emision}</Text>
-          </View>
-        )}
+        renderItem={({ item }) => <Card data={item} />}
         ListEmptyComponent={<Text>No hay datos disponibles</Text>}
       />
     </View>
@@ -57,18 +69,18 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fff',
   },
-  texto: {
+  title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
   },
-  itemContainer: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  itemText: {
-    fontSize: 18,
+  searchInput: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 20,
   },
 });
 
