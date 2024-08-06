@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { StyleSheet, TextInput, Animated } from 'react-native';
+import { StyleSheet, TextInput, Animated, TouchableOpacity, Text, View } from 'react-native';
 
 export default function Input({ placeHolder, setValor, contra, setTextChange }) {
   const [isFocused, setIsFocused] = useState(false);
@@ -9,8 +9,8 @@ export default function Input({ placeHolder, setValor, contra, setTextChange }) 
     setIsFocused(true);
     Animated.timing(borderColor, {
       toValue: 1,
-      duration: 500,
-      useNativeDriver: false
+      duration: 500, // Reducción de la duración para una animación más rápida
+      useNativeDriver: false,
     }).start();
   };
 
@@ -18,8 +18,8 @@ export default function Input({ placeHolder, setValor, contra, setTextChange }) 
     setIsFocused(false);
     Animated.timing(borderColor, {
       toValue: 0,
-      duration: 500,
-      useNativeDriver: false
+      duration: 500, // Reducción de la duración para una animación más rápida
+      useNativeDriver: false,
     }).start();
   };
 
@@ -29,37 +29,39 @@ export default function Input({ placeHolder, setValor, contra, setTextChange }) 
   });
 
   return (
-    <Animated.View style={[styles.inputContainer, { borderColor: animatedBorderColor }]}>
-      <TextInput
-        style={[styles.input, isFocused && styles.inputFocused]} // Cambiar el estilo del texto cuando está enfocado
-        placeholder={placeHolder}
-        value={setValor}
-        placeholderTextColor={'#828181'}
-        secureTextEntry={contra}
-        onChangeText={setTextChange}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-      />
-    </Animated.View>
+    <View style={styles.container}>
+      <Animated.View style={[styles.inputContainer, { borderColor: animatedBorderColor }]}>
+        <TextInput
+          style={[styles.input, isFocused && styles.inputFocused]} // Cambiar el estilo del texto cuando está enfocado
+          placeholder={placeHolder}
+          value={setValor}
+          placeholderTextColor={'#828181'}
+          secureTextEntry={contra}
+          onChangeText={setTextChange}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+        />
+      </Animated.View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    width: '100%', // Asegura que el contenedor ocupe el ancho completo
+  },
   inputContainer: {
-    width: 380,
     borderRadius: 8,
-    paddingTop: 5,
-    paddingBottom: 5,
-    paddingLeft: 10,
-    paddingRight: 10,
+    padding: 10, // Simplificar el padding
     marginVertical: 10,
     borderStyle: 'solid',
-    borderWidth: 2
+    borderWidth: 2,
   },
   input: {
     backgroundColor: '#00000000',
     color: '#000',
     fontSize: 16,
+    width: '100%', // Asegura que el campo de entrada ocupe todo el ancho disponible
   },
   inputFocused: {
     color: '#FFF' // Cambiar el color del texto a blanco cuando está enfocado
