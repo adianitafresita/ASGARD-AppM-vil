@@ -1,16 +1,39 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
+import fetchData from '../utils/fetchdata';
 
-// Importa la imagen desde la ruta correcta de tu proyecto
-const elementImage = require('../../assets/ElementC.png'); // Ajusta la ruta según la estructura de tu proyecto
+const elementImage = require('../../assets/ElementC.png');
 const deliverdImage = require('../../assets/Empleados.png');
 const FacturaImage = require('../../assets/Factura.png');
 
 const HomeScreen = () => {
-  // Números estáticos para empleados y facturas
-  const numeroClientes = 50;
-  const numeroEmpleados = 25;
-  const numeroFacturas = 100;
+  const [numeroClientes, setNumeroClientes] = useState(0);
+  const [numeroEmpleados, setNumeroEmpleados] = useState(0);
+  const [numeroFacturas, setNumeroFacturas] = useState(0);
+
+  useEffect(() => {
+    const obtenerDatos = async () => {
+      try {
+        const clientesData = await fetchData('clientes', 'readAll');
+        const empleadosData = await fetchData('empleado', 'readAll');
+        const facturasData = await fetchData('facturas', 'readAll');
+
+        if (clientesData && clientesData.dataset) {
+          setNumeroClientes(clientesData.dataset.length);
+        }
+        if (empleadosData && empleadosData.dataset) {
+          setNumeroEmpleados(empleadosData.dataset.length);
+        }
+        if (facturasData && facturasData.dataset) {
+          setNumeroFacturas(facturasData.dataset.length);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    obtenerDatos();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -42,7 +65,6 @@ const HomeScreen = () => {
           <Text style={styles.titulo}>Facturas</Text>
         </View>
       </View>
-
     </View>
   );
 };
@@ -60,7 +82,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     color: '#FFD500',
-    alignSelf: 'flex-start', // Alineación horizontal a la izquierda
+    alignSelf: 'flex-start',
   },
   itemContainer: {
     flexDirection: 'row',
@@ -71,7 +93,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     borderRadius: 10,
     width: '85%',
-    justifyContent: 'space-between', // Espacio entre los elementos
+    justifyContent: 'space-between',
   },
   textContainer: {
     flexDirection: 'column',
