@@ -3,19 +3,19 @@ import { View, Text, FlatList, StyleSheet, TextInput } from 'react-native';
 import fetchData from '../utils/fetchdata';
 import Card from '../components/Card/Card';
 
-const FacturaSujetoExcluido = () => {
-  const [usuarios, setUsuarios] = useState([]);
+const Clientes = () => {
+  const [clientes, setClientes] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]);
 
   useEffect(() => {
     const obtenerDatos = async () => {
       try {
-        const data = await fetchData('factura_sujeto_excluido', 'readAll');
+        const data = await fetchData('clientes', 'readAll');
         if (data && data.dataset) {
-          setUsuarios(data.dataset);
+          setClientes(data.dataset);
           setFilteredData(data.dataset);
-          console.log('Data set to usuarios:', data.dataset);
+          console.log('Data set to clientes:', data.dataset);
         } else {
           console.log('No se encontraron datos');
         }
@@ -30,9 +30,9 @@ const FacturaSujetoExcluido = () => {
   useEffect(() => {
     const filterData = () => {
       if (searchQuery === '') {
-        setFilteredData(usuarios);
+        setFilteredData(clientes);
       } else {
-        const filtered = usuarios.filter(item =>
+        const filtered = clientes.filter(item =>
           item.nombre_cliente.toLowerCase().includes(searchQuery.toLowerCase()) ||
           item.apellido_cliente.toLowerCase().includes(searchQuery.toLowerCase())
         );
@@ -41,11 +41,11 @@ const FacturaSujetoExcluido = () => {
     };
 
     filterData();
-  }, [searchQuery, usuarios]);
+  }, [searchQuery, clientes]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Usuarios de Sujeto Excluido Electrónico</Text>
+      <Text style={styles.title}>Clientes</Text>
       <TextInput
         style={styles.searchInput}
         placeholder="Buscar por nombre o apellido"
@@ -54,7 +54,7 @@ const FacturaSujetoExcluido = () => {
       />
       <FlatList
         data={filteredData}
-        keyExtractor={(item) => item.id_factura.toString()}
+        keyExtractor={(item) => item.id_cliente.toString()}
         renderItem={({ item }) => <Card data={item} />}
         ListEmptyComponent={<Text>No hay datos disponibles</Text>}
       />
@@ -83,4 +83,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FacturaSujetoExcluido;
+export default Clientes;

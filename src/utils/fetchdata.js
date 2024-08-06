@@ -12,13 +12,18 @@ const fetchData = async (filename, action, form = null) => {
         const PATH = new URL(`${constantes.IP}/services/admin/${filename}.php`);
         PATH.searchParams.append('action', action);
 
+        console.log(`Fetching data from: ${PATH.href}`); // Mensaje de depuración
+
         const RESPONSE = await fetch(PATH.href, OPTIONS);
         const TEXT = await RESPONSE.text();
+
+        console.log(`Response status: ${RESPONSE.status}`);
+        console.log(`Response text: ${TEXT}`); // Mensaje de depuración
         
         if (!RESPONSE.ok) {
             throw new Error(`HTTP error! status: ${RESPONSE.status}, message: ${TEXT}`);
         }
-        
+
         try {
             return JSON.parse(TEXT);
         } catch (jsonError) {
@@ -29,5 +34,6 @@ const fetchData = async (filename, action, form = null) => {
         return { error: true, message: error.message };
     }
 };
+
 
 export default fetchData;
