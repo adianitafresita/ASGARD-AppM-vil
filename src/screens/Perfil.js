@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Alert, TextInput, TouchableOpacity } from 'react-native';
 import Buttons from "../components/Buttons/Button";
 import fetchData from '../utils/fetchdata';
-import Login from "../screens/LoginScreen"
 
 export default function PerfilAdministrador({ navigation }) {
   const [nombre, setNombre] = useState('');
@@ -16,13 +15,15 @@ export default function PerfilAdministrador({ navigation }) {
       const data = await fetchData('administrador', 'logOut');
       console.log('Respuesta del cierre de sesión:', data);
       if (data.status) {
-        if (navigation && typeof navigation.navigate === 'function') {
-          navigation.navigate('LoginScreen');
-        } else {
-          console.error('Navegación no disponible');
-        }
+        Alert.alert('Éxito', 'Sesión cerrada correctamente');
+        navigation.replace('Login'); // Navegar a la pantalla de inicio de sesión
       } else {
-        Alert.alert('Error', data.error || 'Error desconocido');
+        if (data.error === 'Acción no disponible fuera de la sesión') {
+          Alert.alert('Sesión expirada', 'Tu sesión ha expirado, por favor inicia sesión nuevamente.');
+          navigation.replace('Login'); // Navegar a la pantalla de inicio de sesión
+        } else {
+          Alert.alert('Error', data.error || 'Error desconocido');
+        }
       }
     } catch (error) {
       Alert.alert('Error', 'Ocurrió un error al cerrar la sesión');
