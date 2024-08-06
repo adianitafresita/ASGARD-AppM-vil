@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Alert, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Alert, TextInput } from 'react-native';
 import Buttons from "../components/Buttons/Button";
 import fetchData from '../utils/fetchdata';
 
@@ -32,19 +32,20 @@ export default function PerfilAdministrador({ navigation }) {
 
   const getUser = async () => {
     try {
-      const data = await fetchData('administrador', 'getUser');
-      if (data.status) {
-        setNombre(data.nombre_administrador || '');
-        setApellido(data.apellido_administrador || '');
-        setEmail(data.email_administrador || '');
-        setContraseña(data.contraseña_administrador || '');
-      } else {
-        Alert.alert('Error', data.message || 'No se pudo obtener la información del perfil');
-      }
+        const data = await fetchData('administrador', 'readProfile'); // Cambia 'getUser' a 'readProfile' si es necesario
+        if (data.status) {
+            // Asegúrate de que los nombres coincidan con los que devuelve tu API
+            setEmail(data.dataset.email_administrador || '');
+            setNombre(data.dataset.nombre_administrador || '');
+            setApellido(data.dataset.apellido_administrador || '');
+            setContraseña(data.dataset.contraseña_administrador || '');
+        } else {
+            Alert.alert('Error', data.message || 'No se pudo obtener la información del perfil');
+        }
     } catch (error) {
-      Alert.alert('Error', 'Ocurrió un error al obtener la información del perfil');
+        Alert.alert('Error', 'Ocurrió un error al obtener la información del perfil');
     }
-  };
+};
 
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
