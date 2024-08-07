@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Alert, FlatList, ScrollView, StyleSheet } from 'react-native';
 import Input from '../components/Inputs/Input_crud';
 import Buttons from '../components/Buttons/Button';
-import * as Constantes from '../utils/constantes';
 import fetchData from '../utils/fetchdata';
 import ComboBox from '../components/Combo box/ComboBox';
+import * as Constantes from '../utils/constantes';
 
 const App = () => {
   const ip = Constantes.IP;
   const [view, setView] = useState('list');
-  const [usuarios, setId] = useState([]);
+  const [usuarios, setUsuarios] = useState([]);
   const [servicios, setServicios] = useState([]);
   const [clientes, setClientes] = useState([]);
   const [form, setForm] = useState({
@@ -35,12 +35,12 @@ const App = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const serviciosResponse = await fetch(`${ip}/ASGARD/api/services/admin/factura_sujeto_excluido.php?action=readAllservicio`);
+        const serviciosResponse = await fetch(${ip}/ASGARD/api/services/admin/factura_sujeto_excluido.php?action=readAllservicio);
         const serviciosData = await serviciosResponse.json();
         console.log('Servicios data:', serviciosData);
         setServicios(serviciosData.dataset);
-  
-        const clientesResponse = await fetch(`${ip}/ASGARD/api/services/admin/factura_sujeto_excluido.php?action=readAllclientes`);
+
+        const clientesResponse = await fetch(${ip}/ASGARD/api/services/admin/factura_sujeto_excluido.php?action=readAllclientes);
         const clientesData = await clientesResponse.json();
         console.log('Clientes data:', clientesData);
         setClientes(clientesData.dataset);
@@ -59,20 +59,8 @@ const App = () => {
   }, [view]);
 
   const handleCreate = async () => {
-    const formData = new FormData();
-    formData.append('descripcion', form.descripcion);
-    formData.append('tipo_servicio', form.tipo_servicio);
-    formData.append('id_servicio', form.id_servicio);
-    formData.append('id_cliente', form.id_cliente);
-    formData.append('monto', form.monto);
-    formData.append('fecha_emision', form.fecha_emision);
-
     try {
-      const response = await fetch(`${ip}/ASGARD/api/services/admin/factura_sujeto_excluido.php?action=createRow`, {
-        method: 'POST',
-        body: formData
-      });
-      const data = await response.json();
+      const data = await fetchData('factura', 'createRow');
       if (data.status) {
         setView('list');
         refreshList();
@@ -80,76 +68,52 @@ const App = () => {
         Alert.alert('Error', data.error || 'Error al crear el registro');
       }
     } catch (error) {
-      console.error('Error al enviar datos:', error);
+      console.error('Error al crear el registro:', error);
       Alert.alert('Error', 'Ocurrió un error al crear el registro');
     }
   };
 
   const handleUpdate = async () => {
-    const formData = new FormData();
-    formData.append('idFactura', form.idFactura);
-    formData.append('descripcion', form.descripcion);
-    formData.append('tipo_servicio', form.tipo_servicio);
-    formData.append('id_servicio', form.id_servicio);
-    formData.append('id_cliente', form.id_cliente);
-    formData.append('monto', form.monto);
-    formData.append('fecha_emision', form.fecha_emision);
-
     try {
-      const response = await fetch(`${ip}/ASGARD/api/services/admin/factura_sujeto_excluido.php?action=updateRow`, {
-        method: 'POST',
-        body: formData
-      });
-      const data = await response.json();
+      const data = await fetchData('factura', 'updateRow');
       if (data.status) {
         setView('list');
         refreshList();
       } else {
-        Alert.alert('Error', data.error);
+        Alert.alert('Error', data.error || 'Error al actualizar el registro');
       }
     } catch (error) {
-      console.error(error);
-      Alert.alert('Error', 'Ocurrió un error al actualizar el usuario');
+      console.error('Error al actualizar el registro:', error);
+      Alert.alert('Error', 'Ocurrió un error al actualizar el registro');
     }
   };
 
   const handleDelete = async (id) => {
-    const formData = new FormData();
-    formData.append('idFactura', id);
-
     try {
-      const response = await fetch(`${ip}/ASGARD/api/services/admin/factura_sujeto_excluido.php?action=deleteRow`, {
-        method: 'POST',
-        body: formData
-      });
-      const data = await response.json();
+      const data = await fetchData('factura', 'deleteRow', { idFactura: id });
       if (data.status) {
         refreshList();
       } else {
-        Alert.alert('Error', data.error);
+        Alert.alert('Error', data.error || 'Error al eliminar el registro');
       }
     } catch (error) {
-      console.error(error);
-      Alert.alert('Error', 'Ocurrió un error al eliminar el usuario');
+      console.error('Error al eliminar el registro:', error);
+      Alert.alert('Error', 'Ocurrió un error al eliminar el registro');
     }
   };
 
-  const refreshList = () => {
-    fetch(`${ip}/ASGARD/api/services/admin/factura_sujeto_excluido.php?action=readAll`)
-      .then(response => response.json())
-      .then(data => setId(data.dataset));
+  const refreshList = async () => {
+    try {
+      const data = await fetchData('factura', 'readAll');
+      setUsuarios(data.dataset || []);
+    } catch (error) {
+      console.error('Error al obtener los datos:', error);
+    }
   };
 
   const handleEdit = async (id) => {
-    const formData = new FormData();
-    formData.append('idFactura', id);
-
     try {
-      const response = await fetch(`${ip}/ASGARD/api/services/admin/factura_sujeto_excluido.php?action=readOne`, {
-        method: 'POST',
-        body: formData
-      });
-      const data = await response.json();
+      const data = await fetchData('factura', 'readOne', { idFactura: id });
       if (data.status) {
         setForm({
           idFactura: data.dataset.id_factura,
@@ -162,11 +126,43 @@ const App = () => {
         });
         setView('edit');
       } else {
-        Alert.alert('Error', data.error);
+        Alert.alert('Error', data.error || 'Error al obtener el registro');
       }
     } catch (error) {
-      console.error(error);
-      Alert.alert('Error', 'Ocurrió un error al obtener el usuario');
+      console.error('Error al obtener el registro:', error);
+      Alert.alert('Error', 'Ocurrió un error al obtener el registro');
+    }
+  };
+
+  const handleClientChange = async (clientId) => {
+    setForm({ ...form, id_cliente: clientId });
+
+    try {
+      const data = await fetchData('cliente', 'readOne', { id_cliente: clientId });
+      if (data.status) {
+        // Update form with client details if needed
+      } else {
+        Alert.alert('Error', data.error || 'Error al obtener los detalles del cliente');
+      }
+    } catch (error) {
+      console.error('Error al obtener los detalles del cliente:', error);
+      Alert.alert('Error', 'Error al obtener los detalles del cliente');
+    }
+  };
+
+  const handleServiceChange = async (serviceId) => {
+    setForm({ ...form, id_servicio: serviceId });
+
+    try {
+      const data = await fetchData('servicio', 'readOne', { id_servicio: serviceId });
+      if (data.status) {
+        // Update form with service details if needed
+      } else {
+        Alert.alert('Error', data.error || 'Error al obtener los detalles del servicio');
+      }
+    } catch (error) {
+      console.error('Error al obtener los detalles del servicio:', error);
+      Alert.alert('Error', 'Error al obtener los detalles del servicio');
     }
   };
 
@@ -221,16 +217,16 @@ const App = () => {
               placeHolder='Servicio'
               options={servicios.length > 0 ? servicios.map(servicio => ({ label: servicio.nombre, value: servicio.id_servicio })) : []}
               selectedValue={form.id_servicio}
-              onValueChange={(value) => setForm({ ...form, id_servicio: value })}
+              onValueChange={handleServiceChange}
             />
             <ComboBox
               placeHolder='Cliente'
-              options={clientes.map(cliente => ({
+              options={clientes.length > 0 ? clientes.map(cliente => ({
                 label: cliente.nombre_cliente,
-                value: id_cliente,
-              }))}
+                value: cliente.id_cliente,
+              })) : []}
               selectedValue={form.id_cliente}
-              onValueChange={(value) => setForm({ ...form, id_cliente: value })}
+              onValueChange={handleClientChange}
             />
             <Input
               placeHolder='Monto'
