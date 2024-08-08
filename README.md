@@ -1,9 +1,9 @@
 # ASGARD- INTEGRANTES
 /*-Diego Fernando Villegas Gomez 20220382*/
-/*-Katherine Ariana Melgar Echegoyen 20220125*/
-/*-Roberto Alfonso Escamilla Ruiz 20220356*/
-/*-Gabriel Alessandro Cornejo Godinez 20220005/*
-/*-Genesis Tatiana Herrera Lopez 20220108/*
+Katherine Ariana Melgar Echegoyen 20220125*/
+Roberto Alfonso Escamilla Ruiz 20220356*/
+Gabriel Alessandro Cornejo Godinez 20220005/*
+Genesis Tatiana Herrera Lopez 20220108-/*
 Dependencias instalas:
 "@expo/metro-runtime": "~3.2.1",
     "@expo/vector-icons": "^14.0.0",
