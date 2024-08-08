@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Alert, FlatList, ScrollView, StyleSheet, TextInput } from 'react-native';
+import { View, Text, Alert, FlatList, ScrollView, StyleSheet, TextInput } from 'react-native';
 import Input from '../components/Inputs/Input_crud';
 import Buttons from '../components/Buttons/Button';
 import fetchData from '../utils/fetchdata';
 import ComboBox from '../components/Combo box/ComboBox';
 import * as Constantes from '../utils/constantes';
-import Card from '../components/Card/Card';
+import Card from '../components/Card/CardCrud';
 
 const App = () => {
   const ip = Constantes.IP;
@@ -13,7 +13,6 @@ const App = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [servicios, setServicios] = useState([]);
   const [clientes, setClientes] = useState([]);
-  const [TipServicio, setTipoServicio] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const [form, setForm] = useState({
@@ -26,6 +25,9 @@ const App = () => {
     fecha_emision: '',
   });
 
+  /**
+   * Estado inicial del formulario.
+   */
   const initialFormState = {
     idFactura: '',
     descripcion: '',
@@ -36,6 +38,9 @@ const App = () => {
     fecha_emision: '',
   };
 
+  /**
+   * Obtiene datos de la API al montar el componente.
+   */
   useEffect(() => {
     const fetchDataFromApi = async () => {
       try {
@@ -68,6 +73,9 @@ const App = () => {
     fetchDataFromApi();
   }, [ip]);
 
+  /**
+   * Filtra datos según la consulta de búsqueda.
+   */
   useEffect(() => {
     const filterData = () => {
       if (searchQuery === '') {
@@ -75,7 +83,7 @@ const App = () => {
       } else {
         const filtered = usuarios.filter(item =>
           item.descripcion.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          (item.nombre_cliente && item.apellido_cliente.toLowerCase().includes(searchQuery.toLowerCase()))
+          (item.nombre_cliente && item.nombre_cliente.toLowerCase().includes(searchQuery.toLowerCase()))
         );
         setFilteredData(filtered);
       }
@@ -84,12 +92,18 @@ const App = () => {
     filterData();
   }, [searchQuery, usuarios]);
 
+  /**
+   * Restablece el estado del formulario cuando se cambia a crear.
+   */
   useEffect(() => {
     if (view === 'create') {
       setForm(initialFormState);
     }
   }, [view]);
 
+  /**
+   * Maneja la creación de una nueva factura.
+   */
   const handleCreate = async () => {
     try {
       const data = await fetchData('factura_sujeto_excluido', 'createRow', {
@@ -222,7 +236,13 @@ const App = () => {
             <FlatList
               data={filteredData}
               keyExtractor={(item) => item.id_factura.toString()}
-              renderItem={({ item }) => <Card data={item} />}
+              renderItem={({ item }) => (
+                <Card
+                  data={item}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              )}
               ListEmptyComponent={<Text>No hay datos disponibles</Text>}
             />
           </View>
@@ -240,10 +260,10 @@ const App = () => {
             <ComboBox
               placeHolder='Tipo Servicio'
               options={[
-                { label: 'Credito Fiscal', value: 'Credito Fiscal' },
-                { label: 'Factura Consumidor Final', value: 'Factura Consumidor Final' },
-                { label: 'Factura Sujeto Excluido', value: 'Factura Sujeto Excluido' },
-                { label: 'Otro', value: 'Otro' },
+                { label: 'Credito Fiscal', value: 1 },
+                { label: 'Factura Consumidor Final', value: 2 },
+                { label: 'Factura Sujeto Excluido', value: 3},
+                { label: 'Otro', value: 4 },
               ]}
               selectedValue={form.tipo_servicio}
               onValueChange={(value) => setForm({ ...form, tipo_servicio: value })}
