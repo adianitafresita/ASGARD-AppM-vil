@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Alert, FlatList, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, FlatList, ScrollView, StyleSheet, TextInput } from 'react-native';
 import Input from '../components/Inputs/Input_crud';
 import Buttons from '../components/Buttons/Button';
 import fetchData from '../utils/fetchdata';
 import ComboBox from '../components/Combo box/ComboBox';
 import * as Constantes from '../utils/constantes';
+import Card from '../components/Card/Card';
 
 const App = () => {
   const ip = Constantes.IP;
@@ -12,6 +13,9 @@ const App = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [servicios, setServicios] = useState([]);
   const [clientes, setClientes] = useState([]);
+  const [TipServicio, setTipoServicio] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
   const [form, setForm] = useState({
     idFactura: '',
     descripcion: '',
@@ -48,6 +52,14 @@ const App = () => {
         } else {
           console.error('Error fetching clients:', clientesResponse.message);
         }
+
+        const data = await fetchData('factura_sujeto_excluido', 'readAll');
+        if (data.status) {
+          setUsuarios(data.dataset);
+          setFilteredData(data.dataset);
+        } else {
+          console.error('Error fetching users:', data.message);
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -57,6 +69,22 @@ const App = () => {
   }, [ip]);
 
   useEffect(() => {
+    const filterData = () => {
+      if (searchQuery === '') {
+        setFilteredData(usuarios);
+      } else {
+        const filtered = usuarios.filter(item =>
+          item.descripcion.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (item.nombre_cliente && item.apellido_cliente.toLowerCase().includes(searchQuery.toLowerCase()))
+        );
+        setFilteredData(filtered);
+      }
+    };
+
+    filterData();
+  }, [searchQuery, usuarios]);
+
+  useEffect(() => {
     if (view === 'create') {
       setForm(initialFormState);
     }
@@ -64,9 +92,9 @@ const App = () => {
 
   const handleCreate = async () => {
     try {
-      const data = await fetchData('factura', 'createRow', {
+      const data = await fetchData('factura_sujeto_excluido', 'createRow', {
         descripcion: form.descripcion,
-        tipo_servicio: form.tipo_servicio, // Asegúrate de que esta clave es 'tipo_servicio'
+        tipo_servicio: form.tipo_servicio,
         id_servicio: form.id_servicio,
         id_cliente: form.id_cliente,
         monto: form.monto,
@@ -116,7 +144,10 @@ const App = () => {
   const refreshList = async () => {
     try {
       const data = await fetchData('factura_sujeto_excluido', 'readAll');
-      setUsuarios(data.dataset || []);
+      if (data.status) {
+        setUsuarios(data.dataset || []);
+        setFilteredData(data.dataset || []);
+      }
     } catch (error) {
       console.error('Error al obtener los datos:', error);
     }
@@ -149,9 +180,8 @@ const App = () => {
     setForm({ ...form, id_cliente: clientId });
 
     try {
-      const data = await fetchData('cliente', 'readOne', { id_cliente: clientId });
+      const data = await fetchData('clientes', 'readOne', { id_cliente: clientId });
       if (data.status) {
-        // Update form with client details if needed
       } else {
         Alert.alert('Error', data.message || 'Error al obtener los detalles del cliente');
       }
@@ -165,9 +195,8 @@ const App = () => {
     setForm({ ...form, id_servicio: serviceId });
 
     try {
-      const data = await fetchData('servicio', 'readOne', { id_servicio: serviceId });
+      const data = await fetchData('servicios', 'readOne', { id_servicio: serviceId });
       if (data.status) {
-        // Update form with service details if needed
       } else {
         Alert.alert('Error', data.message || 'Error al obtener los detalles del servicio');
       }
@@ -183,23 +212,18 @@ const App = () => {
         return (
           <View style={styles.listContainer}>
             <Text style={styles.texto}>Sujeto Excluido</Text>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Buscar por descripción o cliente"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
             <Buttons textoBoton="Agregar usuario" accionBoton={() => setView('create')} />
             <FlatList
-              data={usuarios}
-              keyExtractor={item => item.id_factura.toString()}
-              renderItem={({ item }) => (
-                <View style={styles.itemContainer}>
-                  <Text style={styles.itemText}>{item.descripcion}</Text>
-                  <View style={styles.buttonsContainer}>
-                    <TouchableOpacity onPress={() => handleEdit(item.id_factura)} style={styles.button}>
-                      <Text style={styles.buttonText}>Editar</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => handleDelete(item.id_factura)} style={styles.button}>
-                      <Text style={styles.buttonText}>Eliminar</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              )}
+              data={filteredData}
+              keyExtractor={(item) => item.id_factura.toString()}
+              renderItem={({ item }) => <Card data={item} />}
+              ListEmptyComponent={<Text>No hay datos disponibles</Text>}
             />
           </View>
         );
@@ -224,19 +248,19 @@ const App = () => {
               selectedValue={form.tipo_servicio}
               onValueChange={(value) => setForm({ ...form, tipo_servicio: value })}
             />
-                          <ComboBox
-                placeHolder='Servicio'
-                options={servicios.map(service => ({
-                  label: service.nombre_servicio, // Asegúrate de que 'nombre_servicio' es el campo correcto
-                  value: service.id_servicio
-                }))}
-                selectedValue={form.id_servicio}
-                onValueChange={(value) => handleServiceChange(value)}
-              />
+            <ComboBox
+              placeHolder='Servicio'
+              options={servicios.map(service => ({
+                label: service.nombre_servicio,
+                value: service.id_servicio
+              }))}
+              selectedValue={form.id_servicio}
+              onValueChange={(value) => handleServiceChange(value)}
+            />
             <ComboBox
               placeHolder='Cliente'
               options={clientes.map(client => ({
-                label: client.nombre_cliente, // Asegúrate de que 'nombre_cliente' es el campo correcto
+                label: client.nombre_cliente,
                 value: client.id_cliente
               }))}
               selectedValue={form.id_cliente}
@@ -287,31 +311,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginBottom: 20,
   },
-  itemContainer: {
-    padding: 10,
-    marginBottom: 10,
+  searchInput: {
+    height: 40,
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 5,
-  },
-  itemText: {
-    fontSize: 16,
-  },
-  buttonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
-  },
-  button: {
-    padding: 10,
-    backgroundColor: '#007bff',
-    borderRadius: 5,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
+    paddingHorizontal: 10,
+    marginBottom: 20,
   },
 });
 
 export default App;
-

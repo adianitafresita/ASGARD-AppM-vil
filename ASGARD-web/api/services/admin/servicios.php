@@ -24,7 +24,15 @@ if (isset($_GET['action'])) {
                     $result['error'] = 'No hay coincidencias';
                 }
                 break;
-        
+            case 'readOne':
+                if (!isset($_POST['idServicio']) || !$cliente->setId($_POST['idServicio'])) {
+                        $result['error'] = 'Servicio incorrecto';
+                } elseif ($result['dataset'] = $cliente->readOne()) {
+                        $result['status'] = 1;
+                } else {
+                        $result['error'] = 'Servicio inexistente';
+                }
+                break;
             case 'serviciosOfrecidos':
                 if ($result['dataset'] = $servicios->serviciosOfrecidos()) {
                     $result['status'] = 1;
