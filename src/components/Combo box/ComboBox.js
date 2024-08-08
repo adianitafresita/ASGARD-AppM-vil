@@ -1,9 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Picker } from '@react-native-picker/picker'; 
+import { Picker } from '@react-native-picker/picker';
 
 const ComboBox = ({ placeHolder, options, selectedValue, onValueChange }) => {
-  // Verificar si options es un array y tiene elementos
   if (!Array.isArray(options) || options.length === 0) {
     return (
       <View style={styles.container}>
@@ -20,7 +19,7 @@ const ComboBox = ({ placeHolder, options, selectedValue, onValueChange }) => {
         style={styles.picker}
         onValueChange={(itemValue) => onValueChange(itemValue)}
       >
-        <Picker.Item label={Selecciona ${placeHolder}} value="" />
+        <Picker.Item label={`Selecciona ${placeHolder}`} value="" />
         {options.map((option) => (
           <Picker.Item key={option.value} label={option.label} value={option.value} />
         ))}

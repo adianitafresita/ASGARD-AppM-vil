@@ -33,24 +33,28 @@ const App = () => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDataFromApi = async () => {
       try {
-        const serviciosResponse = await fetch(${ip}/ASGARD/api/services/admin/factura_sujeto_excluido.php?action=readAllservicio);
-        const serviciosData = await serviciosResponse.json();
-        console.log('Servicios data:', serviciosData);
-        setServicios(serviciosData.dataset);
+        const serviciosResponse = await fetchData('factura_sujeto_excluido', 'readAllservicio');
+        if (serviciosResponse.status) {
+          setServicios(serviciosResponse.dataset);
+        } else {
+          console.error('Error fetching services:', serviciosResponse.message);
+        }
 
-        const clientesResponse = await fetch(${ip}/ASGARD/api/services/admin/factura_sujeto_excluido.php?action=readAllclientes);
-        const clientesData = await clientesResponse.json();
-        console.log('Clientes data:', clientesData);
-        setClientes(clientesData.dataset);
+        const clientesResponse = await fetchData('factura_sujeto_excluido', 'readAllclientes');
+        if (clientesResponse.status) {
+          setClientes(clientesResponse.dataset);
+        } else {
+          console.error('Error fetching clients:', clientesResponse.message);
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
-  
-    fetchData();
-  }, []);
+
+    fetchDataFromApi();
+  }, [ip]);
 
   useEffect(() => {
     if (view === 'create') {
@@ -60,12 +64,19 @@ const App = () => {
 
   const handleCreate = async () => {
     try {
-      const data = await fetchData('factura', 'createRow');
+      const data = await fetchData('factura', 'createRow', {
+        descripcion: form.descripcion,
+        tipo_servicio: form.tipo_servicio, // Asegúrate de que esta clave es 'tipo_servicio'
+        id_servicio: form.id_servicio,
+        id_cliente: form.id_cliente,
+        monto: form.monto,
+        fecha_emision: form.fecha_emision
+      });
       if (data.status) {
         setView('list');
         refreshList();
       } else {
-        Alert.alert('Error', data.error || 'Error al crear el registro');
+        Alert.alert('Error', data.message || 'Error al crear el registro');
       }
     } catch (error) {
       console.error('Error al crear el registro:', error);
@@ -75,12 +86,12 @@ const App = () => {
 
   const handleUpdate = async () => {
     try {
-      const data = await fetchData('factura', 'updateRow');
+      const data = await fetchData('factura_sujeto_excluido', 'updateRow', form);
       if (data.status) {
         setView('list');
         refreshList();
       } else {
-        Alert.alert('Error', data.error || 'Error al actualizar el registro');
+        Alert.alert('Error', data.message || 'Error al actualizar el registro');
       }
     } catch (error) {
       console.error('Error al actualizar el registro:', error);
@@ -90,11 +101,11 @@ const App = () => {
 
   const handleDelete = async (id) => {
     try {
-      const data = await fetchData('factura', 'deleteRow', { idFactura: id });
+      const data = await fetchData('factura_sujeto_excluido', 'deleteRow', { idFactura: id });
       if (data.status) {
         refreshList();
       } else {
-        Alert.alert('Error', data.error || 'Error al eliminar el registro');
+        Alert.alert('Error', data.message || 'Error al eliminar el registro');
       }
     } catch (error) {
       console.error('Error al eliminar el registro:', error);
@@ -104,7 +115,7 @@ const App = () => {
 
   const refreshList = async () => {
     try {
-      const data = await fetchData('factura', 'readAll');
+      const data = await fetchData('factura_sujeto_excluido', 'readAll');
       setUsuarios(data.dataset || []);
     } catch (error) {
       console.error('Error al obtener los datos:', error);
@@ -113,7 +124,7 @@ const App = () => {
 
   const handleEdit = async (id) => {
     try {
-      const data = await fetchData('factura', 'readOne', { idFactura: id });
+      const data = await fetchData('factura_sujeto_excluido', 'readOne', { idFactura: id });
       if (data.status) {
         setForm({
           idFactura: data.dataset.id_factura,
@@ -126,7 +137,7 @@ const App = () => {
         });
         setView('edit');
       } else {
-        Alert.alert('Error', data.error || 'Error al obtener el registro');
+        Alert.alert('Error', data.message || 'Error al obtener el registro');
       }
     } catch (error) {
       console.error('Error al obtener el registro:', error);
@@ -142,7 +153,7 @@ const App = () => {
       if (data.status) {
         // Update form with client details if needed
       } else {
-        Alert.alert('Error', data.error || 'Error al obtener los detalles del cliente');
+        Alert.alert('Error', data.message || 'Error al obtener los detalles del cliente');
       }
     } catch (error) {
       console.error('Error al obtener los detalles del cliente:', error);
@@ -158,7 +169,7 @@ const App = () => {
       if (data.status) {
         // Update form with service details if needed
       } else {
-        Alert.alert('Error', data.error || 'Error al obtener los detalles del servicio');
+        Alert.alert('Error', data.message || 'Error al obtener los detalles del servicio');
       }
     } catch (error) {
       console.error('Error al obtener los detalles del servicio:', error);
@@ -213,43 +224,42 @@ const App = () => {
               selectedValue={form.tipo_servicio}
               onValueChange={(value) => setForm({ ...form, tipo_servicio: value })}
             />
-            <ComboBox
-              placeHolder='Servicio'
-              options={servicios.length > 0 ? servicios.map(servicio => ({ label: servicio.nombre, value: servicio.id_servicio })) : []}
-              selectedValue={form.id_servicio}
-              onValueChange={handleServiceChange}
-            />
+                          <ComboBox
+                placeHolder='Servicio'
+                options={servicios.map(service => ({
+                  label: service.nombre_servicio, // Asegúrate de que 'nombre_servicio' es el campo correcto
+                  value: service.id_servicio
+                }))}
+                selectedValue={form.id_servicio}
+                onValueChange={(value) => handleServiceChange(value)}
+              />
             <ComboBox
               placeHolder='Cliente'
-              options={clientes.length > 0 ? clientes.map(cliente => ({
-                label: cliente.nombre_cliente,
-                value: cliente.id_cliente,
-              })) : []}
+              options={clientes.map(client => ({
+                label: client.nombre_cliente, // Asegúrate de que 'nombre_cliente' es el campo correcto
+                value: client.id_cliente
+              }))}
               selectedValue={form.id_cliente}
-              onValueChange={handleClientChange}
+              onValueChange={(value) => handleClientChange(value)}
             />
             <Input
               placeHolder='Monto'
               setValor={form.monto}
               setTextChange={(text) => setForm({ ...form, monto: text })}
+              keyboardType='numeric'
             />
             <Input
               placeHolder='Fecha Emisión'
               setValor={form.fecha_emision}
               setTextChange={(text) => setForm({ ...form, fecha_emision: text })}
+              keyboardType='datetime'
             />
-            <Buttons
-              textoBoton={view === 'create' ? 'Crear' : 'Actualizar'}
-              accionBoton={view === 'create' ? handleCreate : handleUpdate}
-            />
-            <Buttons
-              textoBoton='Cancelar'
-              accionBoton={() => setView('list')}
-            />
+            <Buttons textoBoton={view === 'create' ? 'Crear' : 'Actualizar'} accionBoton={view === 'create' ? handleCreate : handleUpdate} />
+            <Buttons textoBoton="Cancelar" accionBoton={() => setView('list')} />
           </ScrollView>
         );
       default:
-        return null;
+        return <View><Text>Vista no encontrada</Text></View>;
     }
   };
 
@@ -269,18 +279,23 @@ const styles = StyleSheet.create({
   listContainer: {
     flex: 1,
   },
+  formContainer: {
+    flex: 1,
+    padding: 20,
+  },
   texto: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 20,
     marginBottom: 20,
   },
   itemContainer: {
     padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    marginBottom: 10,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
   },
   itemText: {
-    fontSize: 18,
+    fontSize: 16,
   },
   buttonsContainer: {
     flexDirection: 'row',
@@ -288,18 +303,15 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   button: {
-    backgroundColor: '#007bff',
     padding: 10,
+    backgroundColor: '#007bff',
     borderRadius: 5,
   },
   buttonText: {
     color: '#fff',
-    fontWeight: 'bold',
-  },
-  formContainer: {
-    flex: 1,
-    justifyContent: 'center',
+    fontSize: 16,
   },
 });
 
 export default App;
+
