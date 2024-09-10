@@ -1,49 +1,41 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const Card = ({ data }) => {
+const CreditInvoiceCard = ({ data }) => {
   return (
     <View style={styles.cardContainer}>
-      <Text style={styles.cardTitle}>{data.nombre_cliente} {data.apellido_cliente}</Text>
+      <Text style={styles.cardTitle}>Factura #{data.id_factura}</Text>
       <View style={styles.fieldContainer}>
-        <Text style={styles.fieldLabel}>NIT:</Text>
-        <Text style={styles.fieldValue}>{data.nit_cliente}</Text>
+        <Text style={styles.fieldLabel}>Descripción:</Text>
+        <Text style={styles.fieldValue}>{data.descripcion}</Text>
       </View>
       <View style={styles.fieldContainer}>
-        <Text style={styles.fieldLabel}>Dirección:</Text>
-        <Text style={styles.fieldValue}>{data.direccion_cliente}</Text>
-      </View>
-      <View style={styles.fieldContainer}>
-        <Text style={styles.fieldLabel}>Departamento:</Text>
-        <Text style={styles.fieldValue}>{data.departamento_cliente}</Text>
-      </View>
-      <View style={styles.fieldContainer}>
-        <Text style={styles.fieldLabel}>Municipio:</Text>
-        <Text style={styles.fieldValue}>{data.municipio_cliente}</Text>
-      </View>
-      <View style={styles.fieldContainer}>
-        <Text style={styles.fieldLabel}>Email:</Text>
-        <Text style={styles.fieldValue}>{data.email_cliente}</Text>
-      </View>
-      <View style={styles.fieldContainer}>
-        <Text style={styles.fieldLabel}>Teléfono:</Text>
-        <Text style={styles.fieldValue}>{data.telefono_cliente}</Text>
-      </View>
-      <View style={styles.fieldContainer}>
-        <Text style={styles.fieldLabel}>DUI:</Text>
-        <Text style={styles.fieldValue}>{data.dui_cliente}</Text>
-      </View>
-      <View style={styles.fieldContainer}>
-        <Text style={styles.fieldLabel}>Tipo de servicio:</Text>
+        <Text style={styles.fieldLabel}>Tipo de Servicio:</Text>
         <Text style={styles.fieldValue}>{data.tipo_servicio}</Text>
       </View>
       <View style={styles.fieldContainer}>
         <Text style={styles.fieldLabel}>Monto:</Text>
-        <Text style={styles.fieldValue}>{data.monto}</Text>
+        <Text style={styles.fieldValue}>${data.monto}</Text>
       </View>
       <View style={styles.fieldContainer}>
-        <Text style={styles.fieldLabel}>Fecha de emisión:</Text>
+        <Text style={styles.fieldLabel}>Fecha de Emisión:</Text>
         <Text style={styles.fieldValue}>{data.fecha_emision}</Text>
+      </View>
+      <View style={styles.fieldContainer}>
+        <Text style={styles.fieldLabel}>ID Cliente:</Text>
+        <Text style={styles.fieldValue}>{data.id_cliente}</Text>
+      </View>
+      <View style={styles.fieldContainer}>
+        <Text style={styles.fieldLabel}>ID Servicio:</Text>
+        <Text style={styles.fieldValue}>{data.id_servicio}</Text>
+      </View>
+      <View style={styles.fieldContainer}>
+        <Text style={styles.fieldLabel}>ID Empleado:</Text>
+        <Text style={styles.fieldValue}>{data.id_empleado}</Text>
+      </View>
+      <View style={styles.fieldContainer}>
+        <Text style={styles.fieldLabel}>ID Administrador:</Text>
+        <Text style={styles.fieldValue}>{data.id_administrador}</Text>
       </View>
     </View>
   );
@@ -69,7 +61,7 @@ const styles = StyleSheet.create({
   },
   fieldContainer: {
     flexDirection: 'row',
-    marginBottom: 10,
+    marginBottom: 5,
     alignItems: 'center',
   },
   fieldLabel: {
@@ -82,8 +74,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#555',
     flex: 2,
-    textAlign: 'right', // Align text to the right
+    textAlign: 'right',
   },
 });
 
-export default Card;
+export default CreditInvoiceCard;

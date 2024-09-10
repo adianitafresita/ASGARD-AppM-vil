@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, TextInput } from 'react-native';
 import fetchData from '../utils/fetchdata';
-import Card from '../components/Card/Card';
+import Card from '../components/Card/CardE';
 
 const Empleados = () => {
-  const [empleados, setEmpleados] = useState([]);
+  const [empleado, setEmpleado] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]);
 
   useEffect(() => {
     const obtenerDatos = async () => {
       try {
-        const data = await fetchData('empleados', 'readAll');
+        const data = await fetchData('empleado', 'readAll');
         if (data && data.dataset) {
-          setEmpleados(data.dataset);
+          setEmpleado(data.dataset);
           setFilteredData(data.dataset);
           console.log('Data set to empleados:', data.dataset);
         } else {
@@ -30,9 +30,9 @@ const Empleados = () => {
   useEffect(() => {
     const filterData = () => {
       if (searchQuery === '') {
-        setFilteredData(empleados);
+        setFilteredData(empleado);
       } else {
-        const filtered = empleados.filter(item =>
+        const filtered = empleado.filter(item =>
           item.nombre_empleado.toLowerCase().includes(searchQuery.toLowerCase()) ||
           item.apellido_empleado.toLowerCase().includes(searchQuery.toLowerCase())
         );
@@ -41,7 +41,7 @@ const Empleados = () => {
     };
 
     filterData();
-  }, [searchQuery, empleados]);
+  }, [searchQuery, empleado]);
 
   return (
     <View style={styles.container}>

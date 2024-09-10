@@ -1,10 +1,10 @@
-// screens/FacturaSujetoExcluido.js
+// screens/CreditoFiscal.js
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, TextInput } from 'react-native';
 import fetchData from '../utils/fetchdata';
 import Card from '../components/Card/Card';
 
-const FacturaSujetoExcluido = () => {
+const CreditoFiscal = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]);
@@ -12,7 +12,8 @@ const FacturaSujetoExcluido = () => {
   useEffect(() => {
     const obtenerDatos = async () => {
       try {
-        const data = await fetchData('comprobante_credito_fiscal', 'readAll');
+        const data = await fetchData('comprobante_credito_fiscal', 'readFactura');
+        console.log('Data fetched:', data); // Verifica el contenido de data
         if (data && data.dataset) {
           setUsuarios(data.dataset);
           setFilteredData(data.dataset);
@@ -34,8 +35,8 @@ const FacturaSujetoExcluido = () => {
         setFilteredData(usuarios);
       } else {
         const filtered = usuarios.filter(item =>
-          item.nombre_cliente.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.apellido_cliente.toLowerCase().includes(searchQuery.toLowerCase())
+          item.nombre_cliente?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.apellido_cliente?.toLowerCase().includes(searchQuery.toLowerCase())
         );
         setFilteredData(filtered);
       }
@@ -84,4 +85,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FacturaSujetoExcluido;
+export default CreditoFiscal;

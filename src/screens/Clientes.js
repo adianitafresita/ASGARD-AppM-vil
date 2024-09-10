@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, TextInput } from 'react-native';
 import fetchData from '../utils/fetchdata';
-import Card from '../components/Card/Card';
+import Card from '../components/Card/CardC';
 
 const Clientes = () => {
   const [clientes, setClientes] = useState([]);
