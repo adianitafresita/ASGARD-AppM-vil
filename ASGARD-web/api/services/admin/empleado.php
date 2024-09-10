@@ -1,52 +1,36 @@
 <?php
-require_once('../../models/data/empleados_data.php');
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $nombre = htmlspecialchars($_POST['nombres_empleado']);
+    $apellido = htmlspecialchars($_POST['apellidos_empleado']);
+    $dui = htmlspecialchars($_POST['dui_empleado']);
+    $email = htmlspecialchars($_POST['email_empleado']);
+    $clave = htmlspecialchars($_POST['contrasena']);
 
-if (isset($_GET['action'])) {
-    session_start();
-    $empleado = new EmpleadoData;
-    $result = array('status' => 0, 'session' => 0, 'message' => null, 'dataset' => null, 'error' => null, 'exception' => null);
+    // Aquí puedes procesar los datos recibidos, por ejemplo, guardarlos en una base de datos
 
-    if (isset($_SESSION['idAdministrador'])) {
-        $result['session'] = 1;
+    // Ejemplo de cómo guardar los datos en una base de datos MySQL
+    $servername = "localhost";
+    $username = "tu_usuario";
+    $email = "tu_email";
+    $password = "tu_contraseña";
+    $dbname = "tu_base_de_datos";
 
-        switch ($_GET['action']) {
-            case 'readAll':
-                if ($result['dataset'] = $empleado->readAll()) {
-                    $result['status'] = 1;
-                    $result['message'] = 'Existen ' . count($result['dataset']) . ' registros';
-                } else {
-                    $result['error'] = 'No existen empleados registrados';
-                }
-                break;
+    // Crear conexión
+    $conn = new mysqli($servername, $username, $password, $dbname);
 
-            case 'createRow':
-                $_POST = Validator::validateForm($_POST);
-                if (
-                    !$empleado->setNombre($_POST['nombres_empleado']) or
-                    !$empleado->setApellido($_POST['apellidos_empleado']) or
-                    !$empleado->setDui($_POST['dui_empleado']) or
-                    !$empleado->setEmail($_POST['email_empleado'])
-                ) {
-                    $result['error'] = $empleado->getDataError();
-                } elseif ($empleado->createRow()) {
-                    $result['status'] = 1;
-                    $result['message'] = 'Empleado creado correctamente';
-                } else {
-                    $result['error'] = 'Ocurrió un problema al crear el empleado';
-                }
-                break;
-
-            default:
-                $result['error'] = 'Acción no disponible dentro de la sesión';
-        }
-    } else {
-        $result['error'] = 'Debe iniciar sesión para realizar esta acción';
+    // Verificar conexión
+    if ($conn->connect_error) {
+        die("Conexión fallida: " . $conn->connect_error);
     }
 
-    $result['exception'] = Database::getException();
-    header('Content-type: application/json; charset=utf-8');
-    print(json_encode($result));
-} else {
-    print(json_encode('Recurso no disponible'));
+    $sql = "INSERT INTO tb_empleados(nombres_empleado, apellidos_empleado, dui_empleado, email_empleados) VALUES ('$nombre', '$apellido', '$dui', '$email')";
+
+    if ($conn->query($sql) === TRUE) {
+        echo "Nuevo registro creado exitosamente";
+    } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+
+    $conn->close();
 }
 ?>

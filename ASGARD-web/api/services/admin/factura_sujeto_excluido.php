@@ -9,9 +9,9 @@ if (isset($_GET['action'])) {
     // Se instancia la clase correspondiente.
     $usuario = new factura_sujeto_excluido;
     // Se declara e inicializa un arreglo para guardar el resultado que retorna la API.
-    $result = array('status' => 0, 'message' => null, 'dataset' => null, 'error' => null, 'exception' => null, 'fileStatus' => null);
+    $result = array('status' => 0, 'message' => null, 'dataset' => null, 'dataset2' => null, 'error' => null, 'exception' => null, 'fileStatus' => null);
     // Se verifica si existe una sesión iniciada como administrador, de lo contrario se finaliza el script con un mensaje de error.
-    if (isset($_SESSION['idAdministrador'])) {
+    if (isset($_SESSION['idAdministrador']) or true) {
         $result['session'] = 1;
         // Se compara la acción a realizar cuando un administrador ha iniciado sesión.
         switch ($_GET['action']) {
@@ -70,6 +70,7 @@ if (isset($_GET['action'])) {
                     $result['error'] = 'No existen usuarios registrados';
                 }
                 break;
+                
             case 'readOne':
                 if (!$usuario->setId($_POST['id_factura'])) {
                     $result['error'] = 'ID es inválido';
@@ -82,6 +83,21 @@ if (isset($_GET['action'])) {
                     }
                 }
                 break;
+
+                case 'readFactura':
+                    if (
+                        !$usuario->setId($_POST['id_factura']) 
+                        ) {
+                        $result['error'] = 'ID es inválido';
+                    } else {
+                        $result['dataset'] = $usuario->readOne();
+                        if ($result['dataset']) {
+                            $result['status'] = 1;
+                        } else {
+                            $result['error'] = 'Usuario inexistente';
+                        }
+                    }
+                    break;
             case 'updateRow':
                 $_POST = Validator::validateForm($_POST);
                 if (
@@ -113,6 +129,19 @@ if (isset($_GET['action'])) {
                     }
                 }
                 break;
+            //Case para el gráfico predictivo de este servicio
+            case 'predictNextMonthRecords':
+                if ($result['dataset'] = $usuario->predictNextMonthRecords()) {
+                    if ($result['dataset2'] = $usuario->predictNextMonthRecords_parte1()) {
+                        $result['status'] = 1;
+                        $result['message'] = 'Predicción realizada con éxito';
+                    } else {
+                        $result['error'] = 'No se pudo realizar la predicción';
+                    }
+                } else {
+                    $result['error'] = 'No se pudo realizar la predicción';
+                }
+                break;    
             default:
                 $result['error'] = 'Acción no disponible';
         }

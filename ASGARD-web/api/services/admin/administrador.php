@@ -25,6 +25,7 @@ if (isset($_GET['action'])) {
                     $result['error'] = 'No hay coincidencias';
                 }
                 break;
+
             case 'createRow':
                 $_POST = Validator::validateForm($_POST);
                 if (
@@ -36,6 +37,7 @@ if (isset($_GET['action'])) {
                     $result['error'] = $administrador->getDataError();
                 } elseif ($_POST['claveAdministrador'] != $_POST['confirmarClave']) {
                     $result['error'] = 'Contraseñas diferentes';
+                    
                 } elseif ($administrador->createRow()) {
                     $result['status'] = 1;
                     $result['message'] = 'Administrador creado correctamente';
@@ -43,6 +45,7 @@ if (isset($_GET['action'])) {
                     $result['error'] = 'Ocurrió un problema al crear el administrador';
                 }
                 break;
+
             case 'createTrabajadores':
                 $_POST = Validator::validateForm($_POST);
                 if (
@@ -61,6 +64,7 @@ if (isset($_GET['action'])) {
                     $result['error'] = 'Ocurrió un problema al crear el administrador';
                 }
                 break;
+
             case 'readAll':
                 if ($result['dataset'] = $administrador->readAll()) {
                     $result['status'] = 1;
@@ -69,6 +73,7 @@ if (isset($_GET['action'])) {
                     $result['error'] = 'No existen administradores registradoss';
                 }
                 break;
+
             case 'readDashboardStats':
                 if ($result['dataset'] = $administrador->readDashboardStats()) {
                     $result['status'] = 1;
@@ -77,6 +82,7 @@ if (isset($_GET['action'])) {
                     $result['error'] = 'No existen administradores registrados';
                 }
                 break;
+                
             case 'readOne':
                 if (!$administrador->setId($_POST['idAdmin'])) {
                     $result['error'] = 'Administrador incorrecto';
@@ -129,6 +135,7 @@ if (isset($_GET['action'])) {
                     $result['error'] = 'Ocurrió un problema al eliminar el administrador';
                 }
                 break;
+
             case 'getUser':
                 if (isset($_SESSION['emailAdministrador'])) {
                     $result['status'] = 1;
@@ -137,6 +144,7 @@ if (isset($_GET['action'])) {
                     $result['error'] = 'Email de administrador indefinido';
                 }
                 break;
+                
             case 'logOut':
                 if (session_destroy()) {
                     $result['status'] = 1;
@@ -163,7 +171,7 @@ if (isset($_GET['action'])) {
                 } elseif ($administrador->editProfile()) {
                     $result['status'] = 1;
                     $result['message'] = 'Perfil modificado correctamente';
-                    $_SESSION['idAdministrador'] = $_POST['idAdministrador'];
+                    $_SESSION['aliasAdministrador'] = $_POST['aliasAdministrador'];
                 } else {
                     $result['error'] = 'Ocurrió un problema al modificar el perfil';
                 }

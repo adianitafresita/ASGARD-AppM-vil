@@ -31,21 +31,24 @@ if (isset($_GET['action'])) {
                     !$cliente->setNombre($_POST['nombreCliente']) or
                     !$cliente->setApellido($_POST['apellidoCliente']) or
                     !$cliente->setCorreo($_POST['emailCliente']) or
-                    !$cliente->setNit($_POST['nitCliente']) or
                     !$cliente->setDireccion($_POST['direccionCliente']) or
                     !$cliente->setDepartamento($_POST['departamentoCliente']) or
                     !$cliente->setMunicipio($_POST['municipioCliente']) or
                     !$cliente->setTelefono($_POST['telefonoCliente']) or
-                    !$cliente->setDui($_POST['duiCliente'])
+                    !$cliente->setImagen($_FILES['imagenCliente']) or
+                    !$cliente->setDUI($_POST['duiCliente'])
                 ) {
                     $result['error'] = $cliente->getDataError();
                 } elseif ($cliente->createRow()) {
                     $result['status'] = 1;
                     $result['message'] = 'Cliente creado correctamente';
+                    // Se asigna el estado del archivo después de insertar.
+                    $result['fileStatus'] = Validator::saveFile($_FILES['imagenCliente'], $cliente::RUTA_IMAGEN);
                 } else {
                     $result['error'] = 'Ocurrió un problema al crear el Cliente';
                 }
                 break;
+
             case 'readAll':
                 if ($result['dataset'] = $cliente->readAll()) {
                     $result['status'] = 1;
@@ -54,16 +57,18 @@ if (isset($_GET['action'])) {
                     $result['error'] = 'No existen clientes registrados';
                 }
                 break;
-            case 'readDashboardStats':
-                if ($result['dataset'] = $cliente->readDashboardStats()) {
-                    $result['status'] = 1;
-                    $result['message'] = 'Chido';
-                } else {
-                    $result['error'] = 'No existen cliente registrados';
-                }
-                break;
+
+                // case 'readDashboardStats':
+                //     if ($result['dataset'] = $cliente->readDashboardStats()) {
+                //         $result['status'] = 1;
+                //         $result['message'] = 'Chido';
+                //     } else {
+                //         $result['error'] = 'No existen cliente registrados';
+                //     }
+                //     break;
+
             case 'readOne':
-                if (!$cliente->setId($_POST['idcliente'])) {
+                if (!isset($_POST['idCliente']) || !$cliente->setId($_POST['idCliente'])) {
                     $result['error'] = 'Cliente incorrecto';
                 } elseif ($result['dataset'] = $cliente->readOne()) {
                     $result['status'] = 1;
@@ -71,40 +76,49 @@ if (isset($_GET['action'])) {
                     $result['error'] = 'Cliente inexistente';
                 }
                 break;
+
             case 'updateRow':
                 $_POST = Validator::validateForm($_POST);
                 if (
                     !$cliente->setId($_POST['idCliente']) or
                     !$cliente->setNombre($_POST['nombreCliente']) or
                     !$cliente->setApellido($_POST['apellidoCliente']) or
-                    !$cliente->setEmail($_POST['emailCliente']) or
-                    !$cliente->setNit($_POST['nitCliente']) or
+                    !$cliente->setCorreo($_POST['emailCliente']) or
                     !$cliente->setDireccion($_POST['direccionCliente']) or
                     !$cliente->setDepartamento($_POST['departamentoCliente']) or
                     !$cliente->setMunicipio($_POST['municipioCliente']) or
                     !$cliente->setTelefono($_POST['telefonoCliente']) or
+                    !$cliente->setImagen($_FILES['imagenCliente']) or
                     !$cliente->setDui($_POST['duiCliente'])
                 ) {
                     $result['error'] = $cliente->getDataError();
                 } elseif ($cliente->updateRow()) {
                     $result['status'] = 1;
                     $result['message'] = 'Cliente modificado correctamente';
+                      // Se asigna el estado del archivo después de actualizar.
+                      $result['fileStatus'] = Validator::changeFile($_FILES['imagenCliente'], $cliente::RUTA_IMAGEN, $cliente->getFilename());
                 } else {
                     $result['error'] = 'Ocurrió un problema al modificar el cliente';
                 }
                 break;
+
             case 'deleteRow':
-                if ($_POST['idCliente'] == $_SESSION['idClien te']) {
-                    $result['error'] = 'No se puede eliminar a sí mismo';
+                // Agregar depuración para verificar la recepción de datos
+                error_log('Datos recibidos en deleteRow: ' . json_encode($_POST));
+                if (!isset($_POST['idCliente'])) {
+                    $result['error'] = 'El idCliente no está definido';
                 } elseif (!$cliente->setId($_POST['idCliente'])) {
                     $result['error'] = $cliente->getDataError();
                 } elseif ($cliente->deleteRow()) {
                     $result['status'] = 1;
                     $result['message'] = 'Cliente eliminado correctamente';
+                     // Se asigna el estado del archivo después de eliminar.
+                     $result['fileStatus'] = Validator::deleteFile($cliente::RUTA_IMAGEN, $cliente->getFilename());
                 } else {
                     $result['error'] = 'Ocurrió un problema al eliminar el Cliente';
                 }
                 break;
+
             case 'getUser':
                 if (isset($_SESSION['emailCliente'])) {
                     $result['status'] = 1;
@@ -113,57 +127,15 @@ if (isset($_GET['action'])) {
                     $result['error'] = 'Email de cliente indefinido';
                 }
                 break;
-            case 'logOut':
-                if (session_destroy()) {
+            //Case para predecir los clientes del siguiente mes    
+            case 'graficoPrediccionClientes':
+                $result['action'] = $_GET['action'];
+                // Llamar a la función que realiza la predicción
+                if ($prediccion = $cliente->graficoPrediccionClientes()) {
                     $result['status'] = 1;
-                    $result['message'] = 'Sesión cerrada correctamente';
+                    $result['prediccion'] = $prediccion;
                 } else {
-                    $result['error'] = 'Ocurrió un problema al cerrar la sesión';
-                }
-                break;
-            case 'readProfile':
-                if ($result['dataset'] = $cliente->readProfile()) {
-                    $result['status'] = 1;
-                } else {
-                    $result['error'] = 'Ocurrió un problema al leer el perfil';
-                }
-                break;
-            case 'editProfile':
-                $_POST = Validator::validateForm($_POST);
-                if (
-                    !$cliente->setId($_POST['idCliente']) or
-                    !$cliente->setNombre($_POST['nombreCliente']) or
-                    !$cliente->setApellido($_POST['apellidoCliente']) or
-                    !$cliente->setEmail($_POST['emailCliente']) or
-                    !$cliente->setNit($_POST['nitCliente']) or
-                    !$cliente->setDireccion($_POST['direccionCliente']) or
-                    !$cliente->setDepartamento($_POST['departamentoCliente']) or
-                    !$cliente->setMunicipio($_POST['municipioCliente']) or
-                    !$cliente->setTelefono($_POST['telefonoCliente']) or
-                    !$cliente->setDui($_POST['duiCliente'])
-                ) {
-                    $result['error'] = $administrador->getDataError();
-                } elseif ($administrador->editProfile()) {
-                    $result['status'] = 1;
-                    $result['message'] = 'Perfil modificado correctamente';
-                    $_SESSION['aliasAdministrador'] = $_POST['aliasAdministrador'];
-                } else {
-                    $result['error'] = 'Ocurrió un problema al modificar el perfil';
-                }
-                break;
-            case 'changePassword':
-                $_POST = Validator::validateForm($_POST);
-                if (!$administrador->checkPassword($_POST['claveActual'])) {
-                    $result['error'] = 'Contraseña actual incorrecta';
-                } elseif ($_POST['claveNueva'] != $_POST['confirmarClave']) {
-                    $result['error'] = 'Confirmación de contraseña diferente';
-                } elseif (!$administrador->setContraseña($_POST['claveNueva'])) {
-                    $result['error'] = $administrador->getDataError();
-                } elseif ($administrador->changePassword()) {
-                    $result['status'] = 1;
-                    $result['message'] = 'Contraseña cambiada correctamente';
-                } else {
-                    $result['error'] = 'Ocurrió un problema al cambiar la contraseña';
+                    $result['error'] = 'No se pudo realizar la predicción';
                 }
                 break;
             default:
@@ -180,35 +152,6 @@ if (isset($_GET['action'])) {
                     $result['error'] = 'Debe crear un administrador para comenzar';
                 }
                 break;
-            case 'signUp':
-                $_POST = Validator::validateForm($_POST);
-                if (
-                    !$cliente->setNombre($_POST['nombreAdministrador']) or
-                    !$cliente->setApellido($_POST['apellidoAdministrador']) or
-                    !$cliente->setEmail($_POST['emailAdministrador']) or
-                    !$cliente->setContraseña($_POST['claveAdministrador'])
-                ) {
-                    $result['error'] = $cliente->getDataError();
-                } elseif ($_POST['claveAdministrador'] != $_POST['confirmarClave']) {
-                    $result['error'] = 'Contraseñas diferentes';
-                } elseif ($cliente->createRow()) {
-                    $result['status'] = 1;
-                    $result['message'] = 'Administrador registrado correctamente';
-                } else {
-                    $result['error'] = 'Ocurrió un problema al registrar el administrador';
-                }
-                break;
-            case 'logIn':
-                $_POST = Validator::validateForm($_POST);
-                if ($cliente->checkUser($_POST['email'], $_POST['clave'])) {
-                    $result['status'] = 1;
-                    $result['message'] = 'Autenticación correcta';
-                } else {
-                    $result['error'] = 'Credenciales incorrectas';
-                }
-                break;
-            default:
-                $result['error'] = 'Acción no disponible fuera de la sesión';
         }
     }
     // Se obtiene la excepción del servidor de base de datos por si ocurrió un problema.
