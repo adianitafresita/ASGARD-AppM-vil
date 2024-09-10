@@ -12,8 +12,7 @@ const CreditoFiscal = () => {
   useEffect(() => {
     const obtenerDatos = async () => {
       try {
-        const data = await fetchData('comprobante_credito_fiscal', 'readFactura');
-        console.log('Data fetched:', data); // Verifica el contenido de data
+        const data = await fetchData('comprobante_credito_fiscal', 'readAll');
         if (data && data.dataset) {
           setUsuarios(data.dataset);
           setFilteredData(data.dataset);
@@ -35,8 +34,8 @@ const CreditoFiscal = () => {
         setFilteredData(usuarios);
       } else {
         const filtered = usuarios.filter(item =>
-          item.nombre_cliente?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.apellido_cliente?.toLowerCase().includes(searchQuery.toLowerCase())
+          item.nombre_cliente.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.apellido_cliente.toLowerCase().includes(searchQuery.toLowerCase())
         );
         setFilteredData(filtered);
       }

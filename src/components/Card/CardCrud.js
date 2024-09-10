@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
-const Card = ({ data, onEdit, onDelete }) => {
+const Card = ({ data }) => {
   return (
     <View style={styles.cardContainer}>
       <Text style={styles.cardTitle}>{data.nombre_cliente} {data.apellido_cliente}</Text>
@@ -45,14 +45,6 @@ const Card = ({ data, onEdit, onDelete }) => {
         <Text style={styles.fieldLabel}>Fecha de emisión:</Text>
         <Text style={styles.fieldValue}>{data.fecha_emision}</Text>
       </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={() => onEdit(data.id_factura)} style={[styles.button, styles.editButton]}>
-          <Text style={styles.buttonText}>Editar</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => onDelete(data.id_factura)} style={[styles.button, styles.deleteButton]}>
-          <Text style={styles.buttonText}>Eliminar</Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 };
@@ -90,28 +82,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#555',
     flex: 2,
-    textAlign: 'right', 
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 15,
-  },
-  button: {
-    padding: 10,
-    borderRadius: 5,
-    width: '48%',
-  },
-  deleteButton: {
-    backgroundColor: '#F44336',
-  },
-  editButton: {
-    backgroundColor: '#FF790D',
-  },
-  buttonText: {
-    color: '#fff',
-    textAlign: 'center',
-    fontWeight: 'bold',
+    textAlign: 'right',
   },
 });
 
