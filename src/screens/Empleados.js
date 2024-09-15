@@ -1,57 +1,44 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Alert, FlatList, ScrollView, StyleSheet } from 'react-native';
-import Input from '../components/Inputs/Input';
+import { View, Text, Alert, FlatList, ScrollView, StyleSheet, TextInput } from 'react-native';
+import Input from '../components/Inputs/Input_crud';
 import Buttons from '../components/Buttons/Button';
-import * as Constantes from '../utils/constantes';
+import fetchData from '../utils/fetchdata';
 import Card from '../components/Card/CardA';
-
-// Función para manejar las solicitudes a la API
-const fetchData = async (endpoint, action, formData = null) => {
-  try {
-    const response = await fetch(`${Constantes.IP}/ASGARD-web/api/services/admin/administrador.php?action=${action}`, {
-      method: formData ? 'POST' : 'GET',
-      body: formData,
-    });
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    return { status: false, message: 'Error al comunicarse con el servidor' };
-  }
-};
+import * as Constantes from '../utils/constantes';
 
 const App = () => {
+  const ip = Constantes.IP;
   const [view, setView] = useState('list');
-  const [administrators, setAdministrators] = useState([]);
+  const [administrador, setAdministrador] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
   const [form, setForm] = useState({
     id_administrador: '',
     nombre_administrador: '',
     apellido_administrador: '',
-    correo_administrador: '',
-    clave_administrador: '',
-    confirmarClave: ''
+    email_administrador: '',
+    contraseña_administrador: ''
   });
 
+  // Estado inicial del formulario
   const initialFormState = {
     id_administrador: '',
     nombre_administrador: '',
     apellido_administrador: '',
-    correo_administrador: '',
+    email_administrador: '',
     clave_administrador: '',
-    confirmarClave: ''
   };
 
   useEffect(() => {
-    const fetchDataFromApi = async () => {
-      const response = await fetchData('administrador', 'readAll');
-      if (response.status) {
-        setAdministrators(response.dataset);
-      } else {
-        console.error('Error fetching administrators:', response.message);
-      }
-    };
-
-    fetchDataFromApi();
+    fetch(`${ip}/ASGARD/api/services/admin/administrador.php?action=readAll`)
+      .then(response => response.json())
+      .then(data => {
+        console.log('Datos de administradores:', data); // <-- Esto te dirá si los datos están llegando correctamente
+        setAdministrador(data.dataset);
+      })
+      .catch(error => {
+        console.error('Error al obtener los administradores:', error);
+      });
   }, []);
 
   useEffect(() => {
@@ -60,109 +47,154 @@ const App = () => {
     }
   }, [view]);
 
+  // Maneja la creación de un nuevo administrador
   const handleCreate = async () => {
     const formData = new FormData();
-    formData.append('nombre_administrador', form.nombre_administrador);
-    formData.append('apellido_administrador', form.apellido_administrador);
-    formData.append('correo_administrador', form.correo_administrador);
-    formData.append('clave_administrador', form.clave_administrador);
+    formData.append('nombreAdministrador', form.nombre_administrador);
+    formData.append('apellidoAdministrador', form.apellido_administrador);
+    formData.append('correoAdministrador', form.email_administradorr);
+    formData.append('claveAdministrador', form.contraseña_administrador);
 
-    const response = await fetchData('administrador', 'createRow', formData);
-    if (response.status) {
-      setView('list');
-      refreshList();
-    } else {
-      Alert.alert('Error', response.message);
+    try {
+      const response = await fetch(`${ip}/ASGARD/api/services/admin/administrador.php?action=createRow`, {
+        method: 'POST',
+        body: formData
+      });
+      const data = await response.json();
+      if (data.status) {
+        setView('list');
+        refreshList();
+      } else {
+        Alert.alert('Error', data.error);
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Ocurrió un error al crear el administrador');
     }
   };
 
   const handleUpdate = async () => {
     const formData = new FormData();
-    formData.append('id_administrador', form.id_administrador);
-    formData.append('nombre_administrador', form.nombre_administrador);
-    formData.append('apellido_administrador', form.apellido_administrador);
-    formData.append('correo_administrador', form.correo_administrador);
-    formData.append('clave_administrador', form.clave_administrador);
+    formData.append('idAdministrador', form.id_administrador);
+    formData.append('nombreAdministrador', form.nombre_administrador);
+    formData.append('apellidoAdministrador', form.apellido_administrador);
+    formData.append('correoAdministrador', form.email_administradorr);
+    formData.append('claveAdministrador', form.contraseña_administrador);
 
-    const response = await fetchData('administrador', 'updateRow', formData);
-    if (response.status) {
-      setView('list');
-      refreshList();
-    } else {
-      Alert.alert('Error', response.message);
+    try {
+      const response = await fetch(`${ip}/ASGARD/api/services/admin/administrador.php?action=updateRow2`, {
+        method: 'POST',
+        body: formData
+      });
+      const data = await response.json();
+      if (data.status) {
+        setView('list');
+        refreshList();
+      } else {
+        Alert.alert('Error', data.error);
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Ocurrió un error al actualizar el administrador');
     }
   };
 
+  // Maneja la eliminación de un administrador
   const handleDelete = async (id) => {
     const formData = new FormData();
-    formData.append('id_administrador', id);
+    formData.append('idAdministrador', id);
 
-    const response = await fetchData('administrador', 'deleteRow', formData);
-    if (response.status) {
-      refreshList();
-    } else {
-      Alert.alert('Error', response.message);
+    try {
+      const response = await fetch(`${ip}/ASGARD/api/services/admin/administrador.php?action=deleteRow`, {
+        method: 'POST',
+        body: formData
+      });
+      const data = await response.json();
+      if (data.status) {
+        refreshList();
+      } else {
+        Alert.alert('Error', data.error);
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Ocurrió un error al eliminar el administrador');
     }
   };
 
-  const refreshList = async () => {
-    const response = await fetchData('administrador', 'readAll');
-    if (response.status) {
-      setAdministrators(response.dataset);
-    } else {
-      console.error('Error fetching administrators:', response.message);
-    }
+  // Refresca la lista de administradores
+  const refreshList = () => {
+    fetch(`${ip}/ASGARD/api/services/admin/administrador.php?action=readAll`)
+      .then(response => response.json())
+      .then(data => setAdministrador(data.dataset));
   };
 
+  // Maneja la edición de un administrador
   const handleEdit = async (id) => {
     const formData = new FormData();
-    formData.append('id_administrador', id);
+    formData.append('idAdministrador', id);
 
-    const response = await fetchData('administrador', 'readOne', formData);
-    if (response.status) {
-      setForm({
-        id_administrador: response.dataset.id_administrador,
-        nombre_administrador: response.dataset.nombre_administrador,
-        apellido_administrador: response.dataset.apellido_administrador,
-        correo_administrador: response.dataset.correo_administrador,
-        clave_administrador: '',
-        confirmarClave: ''
+    try {
+      const response = await fetch(`${ip}/ASGARD/api/services/admin/administrador.php?action=readOne`, {
+        method: 'POST',
+        body: formData
       });
-      setView('edit');
-    } else {
-      Alert.alert('Error', response.message);
+      const data = await response.json();
+      if (data.status) {
+        setForm({
+          idAdministrador: data.dataset.id_administrador,
+          nombreAdministrador: data.dataset.nombre_administrador,
+          apellidoAdministrador: data.dataset.apellido_administrador,
+          correoAdministrador: data.dataset.email_administrador,
+          claveAdministrador: '',
+          confirmarClave: ''
+        });
+        setView('edit');
+      } else {
+        Alert.alert('Error', data.error);
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Ocurrió un error al obtener el administrador');
     }
   };
 
+  // Renderiza la vista correspondiente
   const renderView = () => {
     switch (view) {
       case 'list':
         return (
           <View style={styles.listContainer}>
             <Text style={styles.texto}>Administradores</Text>
-            <Input
-              placeHolder='Buscar...'
-              setValor={''} // Implementar lógica de búsqueda si es necesario
-              setTextChange={() => {}}
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Buscar por nombre, apellido o email"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
             />
-            <Buttons textoBoton="Agregar Administrador" accionBoton={() => setView('create')} />
+            <Buttons textoBoton="Agregar administrador" accionBoton={() => setView('create')} />
             <FlatList
-              data={administrators}
-              keyExtractor={item => item.id_administrador.toString()}
-              renderItem={({ item }) => (
-                <View style={styles.itemContainer}>
-                  <Text style={styles.itemText}>{item.nombre_administrador} {item.apellido_administrador}</Text>
-                  <View style={styles.buttonsContainer}>
-                    <TouchableOpacity onPress={() => handleEdit(item.id_administrador)} style={styles.button}>
-                      <Text style={styles.buttonText}>Editar</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => handleDelete(item.id_administrador)} style={styles.button}>
-                      <Text style={styles.buttonText}>Eliminar</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              )}
-            />
+  data={administrador}
+  keyExtractor={item => item.id_administrador.toString()}
+  renderItem={({ item }) => {
+    if (!item) {
+      return <Text>No se encontraron registros</Text>;
+    }
+    return (
+      <View style={styles.itemContainer}>
+        <Text style={styles.itemText}>{item.nombre_administrador} {item.apellido_administrador}</Text>
+        <View style={styles.buttonsContainer}>
+          <TouchableOpacity onPress={() => handleEdit(item.id_administrador)} style={styles.button}>
+            <Text style={styles.buttonText}>Editar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleDelete(item.id_administrador)} style={styles.button}>
+            <Text style={styles.buttonText}>Eliminar</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }}
+  ListEmptyComponent={<Text>No hay datos disponibles</Text>}
+/>
           </View>
         );
       case 'create':
@@ -172,30 +204,24 @@ const App = () => {
             <Text style={styles.texto}>{view === 'create' ? 'Crear Administrador' : 'Editar Administrador'}</Text>
             <Input
               placeHolder='Nombre'
-              setValor={form.nombre_administrador}
-              setTextChange={(text) => setForm({ ...form, nombre_administrador: text })}
+              setValor={form.nombreAdministrador}
+              setTextChange={(text) => setForm({ ...form, nombreAdministrador: text })}
             />
             <Input
               placeHolder='Apellido'
-              setValor={form.apellido_administrador}
-              setTextChange={(text) => setForm({ ...form, apellido_administrador: text })}
+              setValor={form.apellidoAdministrador}
+              setTextChange={(text) => setForm({ ...form, apellidoAdministrador: text })}
             />
             <Input
-              placeHolder='Correo'
-              setValor={form.correo_administrador}
-              setTextChange={(text) => setForm({ ...form, correo_administrador: text })}
+              placeHolder='Email'
+              setValor={form.emailAdministrador}
+              setTextChange={(text) => setForm({ ...form, emailAdministrador: text })}
             />
             <Input
-              placeHolder='Clave'
-              setValor={form.clave_administrador}
-              setTextChange={(text) => setForm({ ...form, clave_administrador: text })}
-              contra={true}
-            />
-            <Input
-              placeHolder='Confirmar Clave'
-              setValor={form.confirmarClave}
-              setTextChange={(text) => setForm({ ...form, confirmarClave: text })}
-              contra={true}
+              placeHolder='Contraseña'
+              setValor={form.claveAdministrador}
+              setTextChange={(text) => setForm({ ...form, claveAdministrador: text })}
+              secureTextEntry
             />
             <Buttons
               textoBoton={view === 'create' ? 'Crear' : 'Actualizar'}
@@ -208,7 +234,7 @@ const App = () => {
           </ScrollView>
         );
       default:
-        return null;
+        return <View><Text>Vista no encontrada</Text></View>;
     }
   };
 
@@ -222,48 +248,27 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EAD8C0',
-    padding: 10,
+    padding: 20,
+    backgroundColor: '#fff',
   },
   listContainer: {
     flex: 1,
-    alignItems: 'center',
   },
   formContainer: {
-    alignItems: 'center',
+    flex: 1,
+    padding: 20,
   },
   texto: {
-    color: '#322C2B',
-    fontWeight: '900',
-    fontSize: 20,
-    marginVertical: 10,
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
-  itemContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 10,
-    marginVertical: 5,
-    backgroundColor: '#fff',
+  searchInput: {
+    borderColor: '#ddd',
+    borderWidth: 1,
     borderRadius: 5,
-    width: '100%',
-  },
-  itemText: {
-    color: '#322C2B',
-    fontSize: 16,
-  },
-  buttonsContainer: {
-    flexDirection: 'row',
-  },
-  button: {
-    backgroundColor: '#6f4e37',
     padding: 10,
-    borderRadius: 5,
-    marginHorizontal: 5,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 14,
+    marginBottom: 20,
   },
 });
 

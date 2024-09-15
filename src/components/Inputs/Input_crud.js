@@ -1,64 +1,37 @@
-import React, { useState, useRef } from 'react';
-import { StyleSheet, TextInput, Animated } from 'react-native';
+import React from 'react';
+import { StyleSheet, TextInput, View } from 'react-native';
 
 export default function Input({ placeHolder, setValor, contra, setTextChange }) {
-  const [isFocused, setIsFocused] = useState(false);
-  const borderColor = useRef(new Animated.Value(0)).current;
-
-  const handleFocus = () => {
-    setIsFocused(true);
-    Animated.timing(borderColor, {
-      toValue: 1,
-      duration: 500,
-      useNativeDriver: false
-    }).start();
-  };
-
-  const handleBlur = () => {
-    setIsFocused(false);
-    Animated.timing(borderColor, {
-      toValue: 0,
-      duration: 500,
-      useNativeDriver: false
-    }).start();
-  };
-
-  const animatedBorderColor = borderColor.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['#828181', '#FFA500']
-  });
-
   return (
-    <Animated.View style={[styles.inputContainer, { borderColor: animatedBorderColor }]}>
+    <View style={styles.inputContainer}>
       <TextInput
-        style={[styles.input, isFocused && styles.inputFocused]}
+        style={styles.input}
         placeholder={placeHolder}
+        placeholderTextColor="#999"  // Color del placeholder en gris claro
         value={setValor}
-        placeholderTextColor={'#828181'}
-        secureTextEntry={contra}
-        onChangeText={setTextChange}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
+        secureTextEntry={contra}  // Para contraseñas
+        onChangeText={setTextChange}  // Maneja el cambio de texto
+        selectionColor="#000"  // Color del cursor negro
       />
-    </Animated.View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   inputContainer: {
     width: 380,
-    borderRadius: 8,
-    paddingTop: 5,
-    paddingBottom: 5,
-    paddingLeft: 10,
-    paddingRight: 10,
     marginVertical: 10,
-    borderStyle: 'solid',
-    borderWidth: 2
+    borderWidth: 1,  // Añade borde para que sea más visible
+    borderColor: '#000',  // Borde negro
+    borderRadius: 8,
+    paddingHorizontal: 10,
   },
   input: {
-    backgroundColor: '#00000000',
-    color: '#000',
+    color: '#000',  // Color del texto negro
     fontSize: 16,
+    paddingVertical: 8,
+  },
+  inputFocused: {
+    color: '#000'
   }
 });
