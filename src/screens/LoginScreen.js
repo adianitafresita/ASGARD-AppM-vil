@@ -1,10 +1,5 @@
-import React, {useEffect, useState } from 'react';
-import { View, 
-  Text,
-  ActivityIndicator,
-  StyleSheet,
-  Alert,
-  Image} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Alert, Image } from 'react-native';
 
 import fetchData from '../utils/fetchdata';
 import Input from "../components/Inputs/Input";
@@ -15,9 +10,35 @@ const logo = require('../../assets/logo.webp');
 
 export default function LoginScreen({ navigation }) {
     // Estados para almacenar el correo electrónico y la contraseña
-    const [isContra, setIsContra] = useState(true);
+    const [isContra, setIsContra] = useState(true); // Mantener siempre la contraseña oculta
     const [email, setEmail] = useState("");
     const [contrasenia, setContraseña] = useState("");
+
+    // Validaciones de campos
+    const validarCorreo = () => {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email.trim()) {
+            Alert.alert("Error", "El campo de correo no puede estar vacío.");
+            return false;
+        }
+        if (!regex.test(email)) {
+            Alert.alert("Error", "El correo electrónico no es válido.");
+            return false;
+        }
+        return true;
+    };
+
+    const validarContrasenia = () => {
+        if (!contrasenia.trim()) {
+            Alert.alert("Error", "El campo de contraseña no puede estar vacío.");
+            return false;
+        }
+        if (contrasenia.length < 8) {
+            Alert.alert("Error", "La contraseña debe tener al menos 8 caracteres.");
+            return false;
+        }
+        return true;
+    };
 
     const validarSesion = async () => {
         try {
@@ -34,20 +55,23 @@ export default function LoginScreen({ navigation }) {
             Alert.alert("Error", "Ocurrió un error al validar la sesión");
         }
     };
-    
-    
 
     // Función para manejar el inicio de sesión
     const handlerLogin = async () => {
+        // Validar campos antes de enviar el formulario
+        if (!validarCorreo() || !validarContrasenia()) {
+            return;
+        }
+
         try {
             // Crear un FormData con los datos de usuario y contraseña
             const form = new FormData();
             form.append("email", email); // Asegúrate de usar "email"
             form.append("clave", contrasenia); // Asegúrate de usar "clave"
-    
+
             // Realizar una solicitud para iniciar sesión usando fetchData
             const DATA = await fetchData("administrador", "logIn", form);
-    
+
             // Verificar la respuesta del servidor
             if (DATA.status) {
                 // Limpiar los campos de usuario y contraseña
@@ -64,8 +88,9 @@ export default function LoginScreen({ navigation }) {
             // Manejar errores que puedan ocurrir durante la solicitud
             console.error(error, "Error desde Catch");
             Alert.alert("Error", "Ocurrió un error al iniciar sesión");
-        }
+        }
     };
+
     useEffect(() => {
         validarSesion();
     }, []);
@@ -75,7 +100,6 @@ export default function LoginScreen({ navigation }) {
             {/* Contenedor del logotipo */}
             <View style={styles.LogoContainer}>
                 <Image source={logo} style={styles.Logo} />
-                { }
                 <View style={styles.Hr}></View>
             </View>
             {/* Contenedor principal del formulario */}
@@ -91,6 +115,7 @@ export default function LoginScreen({ navigation }) {
                     setTextChange={setEmail}
                     placeholder="ejemplo@gmail.com"
                     placeholderTextColor="#909090"
+                    keyboardType="email-address"
                 />
 
                 {/* Campo de entrada para la contraseña */}
@@ -100,17 +125,18 @@ export default function LoginScreen({ navigation }) {
                     setValor={contrasenia}
                     setTextChange={setContraseña}
                     placeholder="Digita tu contraseña"
-                    secureTextEntry
+                    secureTextEntry={isContra} // Mantener la contraseña oculta por defecto
                     placeholderTextColor="#909090"
+                    onFocus={() => setIsContra(false)} // Mostrar la contraseña temporalmente al escribir
+                    onBlur={() => setIsContra(true)} // Ocultar la contraseña cuando el input pierde el foco
                 />
 
                 {/* Botón para iniciar sesión */}
-                <Buttons textoBoton= "Iniciar Sesión" accionBoton={handlerLogin} />
+                <Buttons textoBoton="Iniciar Sesión" accionBoton={handlerLogin} />
             </View>
         </View>
     );
 }
-
 
 // Estilos para los componentes de la pantalla
 const styles = StyleSheet.create({
@@ -176,5 +202,5 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 18,
         fontWeight: 'bold',
-    },
+    },
 });

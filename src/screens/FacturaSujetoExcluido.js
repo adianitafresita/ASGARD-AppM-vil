@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, TextInput } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TextInput, Alert  } from 'react-native';
 import fetchData from '../utils/fetchdata';
 import Card from '../components/Card/Card'; // Usamos la Card sin botones de edición y eliminación.
 
@@ -44,6 +44,18 @@ const FacturaSujetoExcluido = () => {
     filterData();
   }, [searchQuery, usuarios]);
 
+  // Función para manejar el cambio en el campo de búsqueda
+  const handleSearchChange = (text) => {
+    // Validar que el texto de búsqueda no esté vacío y no contenga números
+    if (text.trim() === '') {
+      Alert.alert("Error", "El campo de búsqueda no puede estar vacío.");
+    } else if (/\d/.test(text)) {
+      Alert.alert("Error", "El campo de búsqueda no debe contener números.");
+    } else {
+      setSearchQuery(text);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Usuarios de sujeto excluido</Text>
@@ -51,7 +63,7 @@ const FacturaSujetoExcluido = () => {
         style={styles.searchInput}
         placeholder="Buscar por descripción o cliente"
         value={searchQuery}
-        onChangeText={setSearchQuery}
+        onChangeText={handleSearchChange}
       />
       <FlatList
         data={filteredData}

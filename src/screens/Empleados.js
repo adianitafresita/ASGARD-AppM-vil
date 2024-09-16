@@ -31,9 +31,9 @@ const App = () => {
 
   useEffect(() => {
     fetch(`${ip}/ASGARD/api/services/admin/administrador.php?action=readAll`)
-      .then(response => response.json())
+      .then(response => response.text())
       .then(data => {
-        console.log('Datos de administradores:', data); // <-- Esto te dirá si los datos están llegando correctamente
+        console.log('Datos de administradores:', data);
         setAdministrador(data.dataset);
       })
       .catch(error => {
@@ -52,20 +52,21 @@ const App = () => {
     const formData = new FormData();
     formData.append('nombreAdministrador', form.nombre_administrador);
     formData.append('apellidoAdministrador', form.apellido_administrador);
-    formData.append('correoAdministrador', form.email_administradorr);
+    formData.append('correoAdministrador', form.email_administrador);
     formData.append('claveAdministrador', form.contraseña_administrador);
 
     try {
       const response = await fetch(`${ip}/ASGARD/api/services/admin/administrador.php?action=createRow`, {
         method: 'POST',
-        body: formData
+        body: formData,
       });
-      const data = await response.json();
-      if (data.status) {
+      const result = await response.json();
+      if (result.status) {
+        Alert.alert('Éxito', 'Administrador creado correctamente');
         setView('list');
         refreshList();
       } else {
-        Alert.alert('Error', data.error);
+        Alert.alert('Error', result.error);
       }
     } catch (error) {
       console.error(error);
@@ -173,28 +174,28 @@ const App = () => {
             />
             <Buttons textoBoton="Agregar administrador" accionBoton={() => setView('create')} />
             <FlatList
-  data={administrador}
-  keyExtractor={item => item.id_administrador.toString()}
-  renderItem={({ item }) => {
-    if (!item) {
-      return <Text>No se encontraron registros</Text>;
-    }
-    return (
-      <View style={styles.itemContainer}>
-        <Text style={styles.itemText}>{item.nombre_administrador} {item.apellido_administrador}</Text>
-        <View style={styles.buttonsContainer}>
-          <TouchableOpacity onPress={() => handleEdit(item.id_administrador)} style={styles.button}>
-            <Text style={styles.buttonText}>Editar</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => handleDelete(item.id_administrador)} style={styles.button}>
-            <Text style={styles.buttonText}>Eliminar</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  }}
-  ListEmptyComponent={<Text>No hay datos disponibles</Text>}
-/>
+              data={administrador}
+              keyExtractor={item => item.id_administrador.toString()}
+              renderItem={({ item }) => {
+                if (!item) {
+                  return <Text>No se encontraron registros</Text>;
+                }
+                return (
+                  <View style={styles.itemContainer}>
+                    <Text style={styles.itemText}>{item.nombre_administrador} {item.apellido_administrador}</Text>
+                    <View style={styles.buttonsContainer}>
+                      <TouchableOpacity onPress={() => handleEdit(item.id_administrador)} style={styles.button}>
+                        <Text style={styles.buttonText}>Editar</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => handleDelete(item.id_administrador)} style={styles.button}>
+                        <Text style={styles.buttonText}>Eliminar</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                );
+              }}
+              ListEmptyComponent={<Text>No hay datos disponibles</Text>}
+            />
           </View>
         );
       case 'create':
