@@ -11,6 +11,9 @@ import CreditoFiscal from './src/screens/CreditoFiscal';
 import Empleados from './src/screens/Empleados';
 import FacturaConsumidorFinal from './src/screens/FacturaConsumidorFinal';
 import FacturaSujetoExcluido from './src/screens/FacturaSujetoExcluido';
+import Envio from './src/screens/Envio';
+import Nueva from './src/screens/Nueva';
+import confirmarCodigo from './src/screens/confirmarCodigo';
 import LoadingScreen from './src/screens/LoadingScreen'; // Importa la pantalla de carga
 
 const Stack = createNativeStackNavigator();
@@ -39,6 +42,9 @@ export default function App() {
             <Stack.Screen name="Empleados" component={Empleados} />
             <Stack.Screen name="FacturaConsumidorFinal" component={FacturaConsumidorFinal} />
             <Stack.Screen name="FacturaSujetoExcluido" component={FacturaSujetoExcluido} />
+            <Stack.Screen name="Envio" component={Envio} />
+            <Stack.Screen name="Nueva" component={Nueva} />
+            <Stack.Screen name="confirmarCodigo" component={confirmarCodigo} />
             <Stack.Screen name="Navigator" component={Navigator} />
           </>
         )}

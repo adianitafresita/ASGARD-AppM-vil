@@ -25,7 +25,7 @@ export default function Input({ placeHolder, setValor, contra, setTextChange }) 
 
   const animatedBorderColor = borderColor.interpolate({
     inputRange: [0, 1],
-    outputRange: ['#828181', '#FFA500'] // Cambiar a anaranjado
+    outputRange: ['#828181', '#FFA500'] // Color de borde cambia a naranja
   });
 
   return (
@@ -35,7 +35,7 @@ export default function Input({ placeHolder, setValor, contra, setTextChange }) 
         placeholder={placeHolder}
         value={setValor}
         placeholderTextColor={'#828181'}
-        secureTextEntry={contra}
+        secureTextEntry={contra} // Mostrar texto como puntos para contraseñas
         onChangeText={setTextChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
@@ -46,7 +46,7 @@ export default function Input({ placeHolder, setValor, contra, setTextChange }) 
 
 const styles = StyleSheet.create({
   inputContainer: {
-    width: 380,
+    width: '100%', // Ajustar el ancho al contenedor padre
     borderRadius: 8,
     paddingTop: 5,
     paddingBottom: 5,
