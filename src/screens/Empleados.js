@@ -27,9 +27,9 @@ const App = () => {
 
   useEffect(() => {
     fetch(`${ip}services/admin/administrador.php?action=readAll`)
-      .then(response => response.json())  // Corrección: usamos .json() para obtener los datos
+      .then(response => response.json())
       .then(data => {
-        setAdministrador(data.dataset || []); // Asegúrate de que dataset es un array
+        setAdministrador(data.dataset || []);
       })
       .catch(error => {
         console.error('Error al obtener los administradores:', error);
@@ -42,7 +42,53 @@ const App = () => {
     }
   }, [view]);
 
+  // Validación del buscador
+  const handleSearch = (text) => {
+    if (text.trim() === '') {
+      Alert.alert('Advertencia', 'El campo de búsqueda no puede estar vacío');
+      return;
+    }
+
+    setSearchQuery(text);
+
+    const filtered = administrador.filter((item) => {
+      const nombreCompleto = `${item.nombre_administrador} ${item.apellido_administrador}`.toLowerCase();
+      return (
+        nombreCompleto.includes(text.toLowerCase()) ||
+        item.email_administrador.toLowerCase().includes(text.toLowerCase())
+      );
+    });
+
+    setAdministrador(filtered);
+  };
+
+  // Validación al crear y editar administrador
+  const validateForm = () => {
+    const { nombre_administrador, apellido_administrador, email_administrador } = form;
+
+    if (!nombre_administrador || !apellido_administrador || !email_administrador) {
+      Alert.alert('Advertencia', 'Todos los campos son obligatorios');
+      return false;
+    }
+
+    const regexNombre = /^[a-zA-Z\s]+$/;
+
+    if (!regexNombre.test(nombre_administrador)) {
+      Alert.alert('Advertencia', 'El nombre no puede contener números');
+      return false;
+    }
+
+    if (!regexNombre.test(apellido_administrador)) {
+      Alert.alert('Advertencia', 'El apellido no puede contener números');
+      return false;
+    }
+
+    return true;
+  };
+
   const handleCreate = async () => {
+    if (!validateForm()) return;
+
     const formData = new FormData();
     formData.append('nombreAdministrador', form.nombre_administrador);
     formData.append('apellidoAdministrador', form.apellido_administrador);
@@ -70,9 +116,10 @@ const App = () => {
   };
 
   const handleUpdate = async () => {
+    if (!validateForm()) return;
+
     const formData = new FormData();
     formData.append('idAdministrador', form.id_administrador);
-
     formData.append('nombreAdministrador', form.nombre_administrador);
     formData.append('apellidoAdministrador', form.apellido_administrador);
     formData.append('correoAdministrador', form.email_administrador);
@@ -119,7 +166,7 @@ const App = () => {
   const refreshList = () => {
     fetch(`${ip}services/admin/administrador.php?action=readAll`)
       .then(response => response.json())
-      .then(data => setAdministrador(data.dataset || []));  // Verificación del dataset
+      .then(data => setAdministrador(data.dataset || []));
   };
 
   const handleEdit = async (id) => {
@@ -160,30 +207,25 @@ const App = () => {
               style={styles.searchInput}
               placeholder="Buscar por nombre, apellido o email"
               value={searchQuery}
-              onChangeText={setSearchQuery}
+              onChangeText={handleSearch}
             />
             <Buttons textoBoton="Agregar administrador" accionBoton={() => setView('create')} />
             <FlatList
               data={administrador}
               keyExtractor={item => item.id_administrador.toString()}
-              renderItem={({ item }) => {
-                if (!item) {
-                  return <Text>No se encontraron registros</Text>;
-                }
-                return (
-                  <View style={styles.itemContainer}>
-                    <Text style={styles.itemText}>{item.nombre_administrador} {item.apellido_administrador}</Text>
-                    <View style={styles.buttonsContainer}>
-                      <TouchableOpacity onPress={() => handleEdit(item.id_administrador)} style={styles.button}>
-                        <Text style={styles.buttonText}>Editar</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity onPress={() => handleDelete(item.id_administrador)} style={styles.button}>
-                        <Text style={styles.buttonText}>Eliminar</Text>
-                      </TouchableOpacity>
-                    </View>
+              renderItem={({ item }) => (
+                <View style={styles.itemContainer}>
+                  <Text style={styles.itemText}>{item.nombre_administrador} {item.apellido_administrador}</Text>
+                  <View style={styles.buttonsContainer}>
+                    <TouchableOpacity onPress={() => handleEdit(item.id_administrador)} style={styles.button}>
+                      <Text style={styles.buttonText}>Editar</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => handleDelete(item.id_administrador)} style={styles.button}>
+                      <Text style={styles.buttonText}>Eliminar</Text>
+                    </TouchableOpacity>
                   </View>
-                );
-              }}
+                </View>
+              )}
               ListEmptyComponent={<Text>No hay datos disponibles</Text>}
             />
           </View>
@@ -208,7 +250,6 @@ const App = () => {
               setValor={form.email_administrador}
               setTextChange={(text) => setForm({ ...form, email_administrador: text })}
             />
-            {/* Mostrar el campo de contraseña solo si se está creando un administrador */}
             {view === 'create' && (
               <Input
                 placeHolder='Contraseña'
@@ -226,10 +267,9 @@ const App = () => {
               accionBoton={() => setView('list')}
             />
           </ScrollView>
-
         );
       default:
-        return <View><Text>Vista no encontrada</Text></View>;
+        return null;
     }
   };
 
@@ -244,48 +284,47 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
   },
   listContainer: {
     flex: 1,
   },
-  formContainer: {
-    flex: 1,
-    padding: 20,
-  },
   texto: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
   },
   searchInput: {
-    borderColor: '#ddd',
     borderWidth: 1,
-    borderRadius: 5,
+    borderColor: '#ccc',
     padding: 10,
-    marginBottom: 20,
+    marginBottom: 10,
+    borderRadius: 5,
   },
   itemContainer: {
-    marginBottom: 10,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 5,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    paddingVertical: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   itemText: {
     fontSize: 16,
   },
   buttonsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
   },
   button: {
+    marginLeft: 10,
+    backgroundColor: '#FF790D',
     padding: 10,
-    backgroundColor: '#007bff',
     borderRadius: 5,
   },
   buttonText: {
     color: '#fff',
+  },
+  formContainer: {
+    paddingBottom: 50,
   },
 });
 
