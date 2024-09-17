@@ -13,10 +13,14 @@ export default function PerfilAdministrador({ navigation }) {
     const [cambiarContraseña, setCambiarContraseña] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
 
+    // Estados para mostrar mensajes de error
+    const [nombreError, setNombreError] = useState('');
+    const [apellidoError, setApellidoError] = useState('');
+    const [emailError, setEmailError] = useState('');
+
     const handleLogout = async () => {
         try {
             const data = await fetchData('administrador', 'logOut');
-            console.log('Respuesta del cierre de sesión:', data);
             if (data.status) {
                 Alert.alert('Éxito', 'Sesión cerrada correctamente');
                 navigation.replace('Login');
@@ -43,33 +47,56 @@ export default function PerfilAdministrador({ navigation }) {
         }
     };
 
+    const validateNombre = (text) => {
+        setNombre(text);
+        if (text === '') {
+            setNombreError('El nombre no puede estar vacío.');
+        } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(text)) {
+            setNombreError('El nombre solo puede contener letras y espacios.');
+        } else {
+            setNombreError('');
+        }
+    };
+
+    const validateApellido = (text) => {
+        setApellido(text);
+        if (text === '') {
+            setApellidoError('El apellido no puede estar vacío.');
+        } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(text)) {
+            setApellidoError('El apellido solo puede contener letras y espacios.');
+        } else {
+            setApellidoError('');
+        }
+    };
+
+    const validateEmail = (text) => {
+        setEmail(text);
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (text === '') {
+            setEmailError('El correo no puede estar vacío.');
+        } else if (!emailPattern.test(text)) {
+            setEmailError('El correo no es válido.');
+        } else {
+            setEmailError('');
+        }
+    };
+
     const handleEditToggle = () => {
         setIsEditing(!isEditing);
     };
 
     const handleSaveChanges = async () => {
+        if (nombreError || apellidoError || emailError) {
+            Alert.alert('Error', 'Por favor corrige los errores antes de guardar.');
+            return;
+        }
+
+        if (!nombre || !apellido || !email) {
+            Alert.alert('Error', 'Todos los campos son obligatorios.');
+            return;
+        }
+
         try {
-            if (!nombre || !apellido || !email) {
-                Alert.alert('Error', 'Todos los campos son obligatorios.');
-                return;
-            }
-            if (!/^[a-zA-Z]+$/.test(nombre) || !/^[a-zA-Z]+$/.test(apellido)) {
-                Alert.alert('Error', 'El nombre y el apellido deben ser valores alfabéticos.');
-                return;
-            }
-
-            // Validar cambio de contraseña
-            if (cambiarContraseña) {
-                if (!contraseñaActual || !nuevaContraseña || !confirmarContraseña) {
-                    Alert.alert('Error', 'Todos los campos de la contraseña son obligatorios.');
-                    return;
-                }
-                if (nuevaContraseña !== confirmarContraseña) {
-                    Alert.alert('Error', 'Las contraseñas nuevas no coinciden.');
-                    return;
-                }
-            }
-
             const formData = new FormData();
             formData.append('nombreAdministrador', nombre);
             formData.append('apellidoAdministrador', apellido);
@@ -82,8 +109,6 @@ export default function PerfilAdministrador({ navigation }) {
 
             const data = await fetchData('administrador', 'editProfile', formData);
 
-            console.log('Respuesta del servidor:', data);
-
             if (data.status) {
                 Alert.alert('Éxito', 'Perfil actualizado correctamente');
                 setIsEditing(false);
@@ -91,7 +116,6 @@ export default function PerfilAdministrador({ navigation }) {
                 Alert.alert('Error', data.message || 'No se pudo actualizar el perfil');
             }
         } catch (error) {
-            console.log('Error al actualizar el perfil:', error);
             Alert.alert('Error', 'Ocurrió un error al actualizar el perfil');
         }
     };
@@ -110,9 +134,10 @@ export default function PerfilAdministrador({ navigation }) {
                 <TextInput
                     style={styles.input}
                     value={nombre}
-                    onChangeText={setNombre}
+                    onChangeText={validateNombre}
                     editable={isEditing}
                 />
+                {nombreError ? <Text style={styles.error}>{nombreError}</Text> : null}
             </View>
 
             <View style={styles.inputContainer}>
@@ -120,9 +145,10 @@ export default function PerfilAdministrador({ navigation }) {
                 <TextInput
                     style={styles.input}
                     value={apellido}
-                    onChangeText={setApellido}
+                    onChangeText={validateApellido}
                     editable={isEditing}
                 />
+                {apellidoError ? <Text style={styles.error}>{apellidoError}</Text> : null}
             </View>
 
             <View style={styles.inputContainer}>
@@ -130,9 +156,10 @@ export default function PerfilAdministrador({ navigation }) {
                 <TextInput
                     style={styles.input}
                     value={email}
-                    onChangeText={setEmail}
+                    onChangeText={validateEmail}
                     editable={isEditing}
                 />
+                {emailError ? <Text style={styles.error}>{emailError}</Text> : null}
             </View>
 
             {isEditing && (
@@ -223,6 +250,10 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderColor: '#ccc',
         padding: 5,
+    },
+    error: {
+        color: 'red',
+        fontSize: 12,
     },
     switchContainer: {
         flexDirection: 'row',
