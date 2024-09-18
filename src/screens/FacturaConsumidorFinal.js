@@ -3,7 +3,7 @@ import { View, Text, FlatList, StyleSheet, TextInput, Alert } from 'react-native
 import fetchData from '../utils/fetchdata';
 import Card from '../components/Card/Card';
 
-const FacturaSujetoExcluido = () => {
+const FacturaConsumidorFinal = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]);
@@ -27,14 +27,16 @@ const FacturaSujetoExcluido = () => {
     obtenerDatos();
   }, []);
 
+  // Filtrar datos según la consulta de búsqueda.
   useEffect(() => {
     const filterData = () => {
-      if (searchQuery === '') {
+      // Si el campo está vacío, mostramos todos los usuarios
+      if (searchQuery.trim() === '') {
         setFilteredData(usuarios);
       } else {
         const filtered = usuarios.filter(item =>
-          item.nombre_cliente.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.apellido_cliente.toLowerCase().includes(searchQuery.toLowerCase())
+          (item.nombre_cliente && item.nombre_cliente.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          (item.apellido_cliente && item.apellido_cliente.toLowerCase().includes(searchQuery.toLowerCase()))
         );
         setFilteredData(filtered);
       }
@@ -45,10 +47,8 @@ const FacturaSujetoExcluido = () => {
 
   // Función para manejar el cambio en el campo de búsqueda
   const handleSearchChange = (text) => {
-    // Validar que el texto de búsqueda no esté vacío y no contenga números
-    if (text.trim() === '') {
-      Alert.alert("Error", "El campo de búsqueda no puede estar vacío.");
-    } else if (/\d/.test(text)) {
+    // Solo validamos si el texto no está vacío
+    if (/\d/.test(text)) {
       Alert.alert("Error", "El campo de búsqueda no debe contener números.");
     } else {
       setSearchQuery(text);
@@ -95,4 +95,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FacturaSujetoExcluido;
+export default FacturaConsumidorFinal;

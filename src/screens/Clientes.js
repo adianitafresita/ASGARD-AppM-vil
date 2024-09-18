@@ -46,7 +46,7 @@ const Clientes = () => {
   // Función para manejar el cambio en el campo de búsqueda
   const handleSearchChange = (text) => {
     // Validar que el texto de búsqueda no esté vacío y no contenga números
-    if (text.trim() === '') {
+    if (text.trim() === ' ') {
       Alert.alert("Error", "El campo de búsqueda no puede estar vacío.");
     } else if (/\d/.test(text)) {
       Alert.alert("Error", "El campo de búsqueda no debe contener números.");

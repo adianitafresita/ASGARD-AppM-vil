@@ -44,15 +44,10 @@ const App = () => {
 
   // Validación del buscador
   const handleSearch = (text) => {
-    if (text.trim() === '') {
-      Alert.alert('Advertencia', 'El campo de búsqueda no puede estar vacío');
-      return;
-    }
-
     setSearchQuery(text);
 
     const filtered = administrador.filter((item) => {
-      const nombreCompleto = `${item.nombre_administrador} ${item.apellido_administrador}`.toLowerCase();
+      const nombreCompleto = `${item.nombre_administrador} ${item.apellido_administrador}.toLowerCase()`;
       return (
         nombreCompleto.includes(text.toLowerCase()) ||
         item.email_administrador.toLowerCase().includes(text.toLowerCase())
@@ -284,6 +279,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor: '#fff',
   },
   listContainer: {
     flex: 1,
