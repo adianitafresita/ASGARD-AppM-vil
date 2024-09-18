@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import fetchData from "../utils/fetchdata";
 import Buttons from '../components/Buttons/Button';
 import InputPerfil from '../components/Inputs/InputPerfil';
@@ -63,7 +63,7 @@ export default function PerfilAdministrador({ navigation }) {
     try {
       const DATA = await fetchData("administrador", "logOut");
       if (DATA.status) {
-        navigation.navigate('Login'); // Verifica que 'Sesion' sea el nombre correcto de la pantalla de inicio de sesión
+        navigation.navigate('Login'); 
       } else {
         Alert.alert('Error', DATA.error);
       }
@@ -81,51 +81,56 @@ export default function PerfilAdministrador({ navigation }) {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Información del Administrador</Text>
-      <View style={styles.mainContainer}>
-        <InputPerfil
-          placeHolder="Nombre"
-          setValor={nombre}
-          setTextChange={setNombre}
-        />
-        <InputPerfil
-          placeHolder="Apellido"
-          setValor={apellido}
-          setTextChange={setApellido}
-        />
-        <InputPerfil
-          placeHolder="Correo"
-          setValor={correo}
-          setTextChange={setCorreo}
-        />
-        {cambiarContraseña && (
-          <>
-            <InputPerfil
-              placeHolder="Contraseña Actual"
-              setValor={contraseñaActual}
-              setTextChange={setContraseñaActual}
-              secureTextEntry
-            />
-            <InputPerfil
-              placeHolder="Nueva Contraseña"
-              setValor={nuevaContraseña}
-              setTextChange={setNuevaContraseña}
-              secureTextEntry
-            />
-            <InputPerfil
-              placeHolder="Confirmar Nueva Contraseña"
-              setValor={confirmarContraseña}
-              setTextChange={setConfirmarContraseña}
-              secureTextEntry
-            />
-          </>
-        )}
-        <Buttons textoBoton='Editar Perfil' accionBoton={handlerEditarPerfil} />
-        <Buttons textoBoton='Cambiar Contraseña' accionBoton={navigateCambioContra} />
-        <Buttons textoBoton='Cerrar Sesión' accionBoton={handleLogout} />
-      </View>
-    </View>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <Text style={styles.header}>Información del Administrador</Text>
+        <View style={styles.mainContainer}>
+          <InputPerfil
+            placeHolder="Nombre"
+            setValor={nombre}
+            setTextChange={setNombre}
+          />
+          <InputPerfil
+            placeHolder="Apellido"
+            setValor={apellido}
+            setTextChange={setApellido}
+          />
+          <InputPerfil
+            placeHolder="Correo"
+            setValor={correo}
+            setTextChange={setCorreo}
+          />
+          {cambiarContraseña && (
+            <>
+              <InputPerfil
+                placeHolder="Contraseña Actual"
+                setValor={contraseñaActual}
+                setTextChange={setContraseñaActual}
+                secureTextEntry
+              />
+              <InputPerfil
+                placeHolder="Nueva Contraseña"
+                setValor={nuevaContraseña}
+                setTextChange={setNuevaContraseña}
+                secureTextEntry
+              />
+              <InputPerfil
+                placeHolder="Confirmar Nueva Contraseña"
+                setValor={confirmarContraseña}
+                setTextChange={setConfirmarContraseña}
+                secureTextEntry
+              />
+            </>
+          )}
+          <Buttons textoBoton='Editar Perfil' accionBoton={handlerEditarPerfil} />
+          <Buttons textoBoton='Cambiar Contraseña' accionBoton={navigateCambioContra} />
+          <Buttons textoBoton='Cerrar Sesión' accionBoton={handleLogout} />
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -133,8 +138,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-    alignItems: 'center',
+  },
+  scrollContainer: {
+    flexGrow: 1,
     justifyContent: 'center',
+    alignItems: 'center',
   },
   header: {
     fontSize: 24,
@@ -143,10 +151,8 @@ const styles = StyleSheet.create({
     marginTop: 70,
   },
   mainContainer: {
-    flex: 1,
     width: '100%',
     paddingHorizontal: 20,
     alignItems: 'center',
-    justifyContent: 'center',
   },
 });
