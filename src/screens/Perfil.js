@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Alert, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import fetchData from "../utils/fetchdata";
 import Buttons from '../components/Buttons/Button';
-import InputPerfil from '../components/Inputs/InputPerfil';
+import InputPerfil from '../components/Inputs/InputEdit';
 
 export default function PerfilAdministrador({ navigation }) {
   const [nombre, setNombre] = useState("");

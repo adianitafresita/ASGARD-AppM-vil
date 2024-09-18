@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import Input from "../components/Inputs/Input";
+import Input from "../components/Inputs/InputEdit";
 import Buttons from "../components/Buttons/Button";
 import fetchData from "../utils/fetchdata";
 
@@ -29,20 +29,20 @@ export default function RecoverPassword({ navigation }) {
     <View style={styles.container}>
       <View style={styles.backgroundShapeTopLeft} />
       <View style={styles.backgroundShapeBottomRight} />
-      <Text style={styles.title}>Recover Password</Text>
+      <Text style={styles.title}>Recuperar contraseña</Text>
       <View style={styles.loginContainer}>
-        <Text style={styles.label}>Email address</Text>
+        <Text style={styles.label}>Direccion de Email</Text>
         <Input
-          placeholder="Enter Your Email here"
+          placeholder="Ingresa Tu Email Aqui"
           setValor={email}
           setTextChange={setEmail}
         />
         <Buttons
-          textoBoton="Send Code"
+          textoBoton="Enviar codigo"
           accionBoton={sendCode}
         />
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backLink}>Back to Login</Text>
+          <Text style={styles.backLink}>Volver</Text>
         </TouchableOpacity>
       </View>
     </View>

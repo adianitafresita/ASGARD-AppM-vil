@@ -43,20 +43,20 @@ export default function ResetPassword({ navigation, route }) {
     <View style={styles.container}>
       <View style={styles.backgroundShapeTopLeft} />
       <View style={styles.backgroundShapeBottomRight} />
-      <Text style={styles.title}>Change your password</Text>
+      <Text style={styles.title}>V¿Cambia tu contraseña</Text>
       <View style={styles.loginContainer}>
-        <Text style={styles.label}>New Password</Text>
+        <Text style={styles.label}>Nueva Contraseña</Text>
         <Input
           value={newPassword}
           setTextChange={setNewPassword}
-          placeholder="Enter new password"
+          placeholder="Ingresa Nueva Contraseña"
           secureTextEntry={true}
         />
         <Text style={styles.label}>Confirm New Password</Text>
         <Input
           value={confirmPassword}
           setTextChange={setConfirmPassword}
-          placeholder="Confirm new password"
+          placeholder="Confirma Nueva Contraseña"
           secureTextEntry={true}
         />
         <Buttons
@@ -64,7 +64,7 @@ export default function ResetPassword({ navigation, route }) {
           accionBoton={handleChangePassword}
         />
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backLink}>Back to Login</Text>
+          <Text style={styles.backLink}>Volver</Text>
         </TouchableOpacity>
       </View>
     </View>

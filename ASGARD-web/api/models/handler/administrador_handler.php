@@ -58,15 +58,25 @@ class AdministradorHandler
         $params = array($this->contraseña, $_SESSION['idAdministrador']);
         return Database::executeRow($sql, $params);
     }
-
     public function readProfile()
     {
-        $sql = 'SELECT id_administrador, nombre_administrador, apellido_administrador, email_administrador, contraseña_administrador
-                FROM tb_administrador
-                WHERE id_administrador = ?';
-        $params = array($_SESSION['idAdministrador']);
-        return Database::getRow($sql, $params);
+        try {
+            $sql = 'SELECT id_administrador, nombre_administrador, apellido_administrador, email_administrador, contraseña_administrador
+                    FROM tb_administrador
+                    WHERE id_administrador = ?';
+            $params = array($_SESSION['idAdministrador']);
+            $result = Database::getRow($sql, $params);
+    
+            if ($result) {
+                return $result;
+            } else {
+                return array('status' => 0, 'error' => 'Administrador no encontrado');
+            }
+        } catch (Exception $e) {
+            return array('status' => 0, 'error' => $e->getMessage());
+        }
     }
+    
 
     public function editProfile()
     {

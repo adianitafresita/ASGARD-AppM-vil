@@ -31,20 +31,20 @@ export default function ConfirmCode({ navigation, route }) {
     <View style={styles.container}>
       <View style={styles.backgroundShapeTopLeft} />
       <View style={styles.backgroundShapeBottomRight} />
-      <Text style={styles.title}>Enter the code</Text>
+      <Text style={styles.title}>Ingresa el Codigo</Text>
       <View style={styles.loginContainer}>
-        <Text style={styles.label}>Code</Text>
+        <Text style={styles.label}>Codigo</Text>
         <Input
           value={code}
           setTextChange={setCode}
-          placeholder="Enter the code sent to your email"
+          placeholder="Ingresa el codigo"
         />
         <Buttons
-          textoBoton="Verify Code"
+          textoBoton="Verificar Codigo"
           accionBoton={sendCode}
         />
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backLink}>Back to Login</Text>
+          <Text style={styles.backLink}>Volver</Text>
         </TouchableOpacity>
       </View>
     </View>

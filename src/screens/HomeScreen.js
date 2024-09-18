@@ -16,7 +16,7 @@ const HomeScreen = () => {
       try {
         const clientesData = await fetchData('clientes', 'readAll');
         const empleadosData = await fetchData('empleado', 'readAll');
-        const facturasData = await fetchData('facturas', 'readAll');
+        const facturasData = await fetchData('servicios', 'readAll');
 
         if (clientesData && clientesData.dataset) {
           setNumeroClientes(clientesData.dataset.length);
