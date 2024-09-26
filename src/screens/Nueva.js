@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import fetchData from "../utils/fetchdata";
-import Input from "../components/Inputs/Input";
+import Input from "../components/Inputs/InputEdit";
 import Buttons from "../components/Buttons/Button";
 
 export default function ResetPassword({ navigation, route }) {
@@ -43,7 +43,7 @@ export default function ResetPassword({ navigation, route }) {
     <View style={styles.container}>
       <View style={styles.backgroundShapeTopLeft} />
       <View style={styles.backgroundShapeBottomRight} />
-      <Text style={styles.title}>V¿Cambia tu contraseña</Text>
+      <Text style={styles.title}>Cambia tu contraseña</Text>
       <View style={styles.loginContainer}>
         <Text style={styles.label}>Nueva Contraseña</Text>
         <Input

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import Input from "../components/Inputs/Input";
+import Input from "../components/Inputs/InputEdit";
 import Buttons from "../components/Buttons/Button";
 import fetchData from "../utils/fetchdata";
 

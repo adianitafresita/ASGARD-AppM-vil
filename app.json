@@ -17,10 +17,16 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.gaelbri17.ASGARDapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "cfcac985-390d-4e80-8fac-d1a54bfcdc73"
+      }
     }
   }
 }
