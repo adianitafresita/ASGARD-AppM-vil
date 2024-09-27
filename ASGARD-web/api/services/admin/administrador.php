@@ -224,15 +224,21 @@ if (isset($_GET['action'])) {
                     $result['error'] = 'Ocurrió un problema al registrar el administrador';
                 }
                 break;
-            case 'logIn':
-                $_POST = Validator::validateForm($_POST);
-                if ($administrador->checkUser($_POST['email'], $_POST['clave'])) {
-                    $result['status'] = 1;
-                    $result['message'] = 'Autenticación correcta';
-                } else {
-                    $result['error'] = 'Credenciales incorrectas';
-                }
-                break;
+                case 'logIn':
+                    $_POST = Validator::validateForm($_POST);
+                    
+                    // Verificar que 'email' y 'clave' están definidos
+                    if (isset($_POST['email']) && isset($_POST['clave'])) {
+                        if ($administrador->checkUser($_POST['email'], $_POST['clave'])) {
+                            $result['status'] = 1;
+                            $result['message'] = 'Autenticación correcta';
+                        } else {
+                            $result['error'] = 'Credenciales incorrectas';
+                        }
+                    } else {
+                        $result['error'] = 'Email y contraseña son requeridos';
+                    }
+                    break;
             default:
                 $result['error'] = 'Acción no disponible fuera de la sesión';
         }

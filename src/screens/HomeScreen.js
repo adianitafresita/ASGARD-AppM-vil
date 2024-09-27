@@ -15,15 +15,15 @@ const HomeScreen = () => {
     const obtenerDatos = async () => {
       try {
         const clientesData = await fetchData('clientes', 'readAll');
-        const empleadosData = await fetchData('empleado', 'readAll');
+       // const empleadosData = await fetchData('empleado', 'readAll');
         const facturasData = await fetchData('servicios', 'readAll');
 
         if (clientesData && clientesData.dataset) {
           setNumeroClientes(clientesData.dataset.length);
         }
-        if (empleadosData && empleadosData.dataset) {
+     /*   if (empleadosData && empleadosData.dataset) {
           setNumeroEmpleados(empleadosData.dataset.length);
-        }
+        }*/
         if (facturasData && facturasData.dataset) {
           setNumeroFacturas(facturasData.dataset.length);
         }
@@ -48,14 +48,14 @@ const HomeScreen = () => {
         </View>
       </View>
 
-      {/* Contenedor para Empleados */}
-      <View style={styles.itemContainer}>
+      {/* Contenedor para Empleados    <View style={styles.itemContainer}>
         <Image source={deliverdImage} style={styles.deliverdImage} />
         <View style={styles.textContainer}>
           <Text style={styles.numero}>{numeroEmpleados}</Text>
           <Text style={styles.titulo}>Empleados</Text>
         </View>
-      </View>
+      </View>*/
+}
 
       {/* Contenedor para Facturas */}
       <View style={styles.itemContainer}>
