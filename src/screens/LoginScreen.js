@@ -70,7 +70,7 @@ export default function LoginScreen({ navigation }) {
             form.append("clave", contrasenia); // Asegúrate de usar "clave"
 
             // Realizar una solicitud para iniciar sesión usando fetchData
-            const DATA = await fetchData("administrador", "logIn2", form);
+            const DATA = await fetchData("administrador", "logIn", form);
 
             // Verificar la respuesta del servidor
             if (DATA.status) {
